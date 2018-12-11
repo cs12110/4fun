@@ -1,0 +1,81 @@
+package com.pkgs.task;
+
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.pkgs.entity.TopicEntity;
+import com.pkgs.handler.AbstractHandler;
+import com.pkgs.handler.SubTopicHandler;
+import com.pkgs.handler.TopTopicHandler;
+import com.pkgs.service.TopicService;
+import com.pkgs.util.SysUtil;
+
+/**
+ * 获取topic
+ *
+ * 
+ * @author cs12110 at 2018年12月10日下午9:39:12
+ *
+ */
+public class TopicWorker implements Runnable {
+
+	private Logger logger = LoggerFactory.getLogger(TopicWorker.class);
+	private TopicService topicService = new TopicService();
+
+	@Override
+	public void run() {
+		while (true) {
+			logger.info("start working at get topic from zhihu");
+			long start = System.currentTimeMillis();
+			execute();
+			long end = System.currentTimeMillis();
+			logger.info("get topic is done,spend:{}", (end - start));
+
+			try {
+				Thread.sleep(1000 * 120);
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	private void execute() {
+
+		// 1. 首先查询出来所有的父级话题
+		AbstractHandler<List<TopicEntity>> topHandler = new TopTopicHandler();
+		List<TopicEntity> list = topHandler.get(SysUtil.TOPIC_URL);
+		for (TopicEntity e : list) {
+			topicService.saveIfNotExists(e);
+		}
+
+		// 2. 根据父级话题获取所有子话题
+		List<TopicEntity> topList = topicService.queryTopTopic();
+		for (TopicEntity e : topList) {
+			try {
+				// logger.info("start get {},{} ", e.getId(), e.getName());
+				AbstractHandler<List<TopicEntity>> subHandler = new SubTopicHandler(e.getId());
+
+				// 只获取前50的话题,大概1k个子话题
+				for (int index = 0; index < 50; index++) {
+					Map<String, String> map = SysUtil.buildSubTopicSearchMap(e.getDataId(), index * 20);
+					List<TopicEntity> subList = subHandler.post(SysUtil.SUB_TOPIC_URL, map);
+					// 没有子级话题
+					if (null == subList || subList.isEmpty()) {
+						break;
+					}
+					for (TopicEntity sub : subList) {
+						topicService.saveIfNotExists(sub);
+					}
+				}
+
+				// logger.info("get {},{} is done", e.getId(), e.getName());
+			} catch (Exception ex) {
+				logger.error("{}", ex);
+			}
+		}
+
+	}
+
+}
