@@ -1,7 +1,7 @@
 package com.pkgs;
 
-import com.pkgs.task.TopAnswerWorker;
-import com.pkgs.task.TopicWorker;
+import com.pkgs.task.AnswerTask;
+import com.pkgs.task.TopicTask;
 
 /**
  * App
@@ -13,8 +13,8 @@ import com.pkgs.task.TopicWorker;
 public class App {
 
 	public static void main(String[] args) {
-		new Thread(new TopicWorker()).start();
-		new Thread(new TopAnswerWorker()).start();
+		new Thread(new TopicTask()).start();
+		new Thread(new AnswerTask()).start();
 	}
 
 }

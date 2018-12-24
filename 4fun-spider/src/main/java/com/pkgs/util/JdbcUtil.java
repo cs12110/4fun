@@ -36,7 +36,7 @@ public class JdbcUtil {
 
 			dataSource.setInitialPoolSize(2);
 			dataSource.setMinPoolSize(2);
-			dataSource.setMaxPoolSize(3);
+			dataSource.setMaxPoolSize(10);
 			dataSource.setMaxStatements(50);
 			dataSource.setMaxIdleTime(60);
 

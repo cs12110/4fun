@@ -25,6 +25,8 @@ public class TopicEntity {
 
 	private String updateTime;
 
+	private Integer done;
+
 	public Integer getId() {
 		return id;
 	}
@@ -79,6 +81,14 @@ public class TopicEntity {
 
 	public void setUpdateTime(String updateTime) {
 		this.updateTime = updateTime;
+	}
+
+	public Integer getDone() {
+		return done;
+	}
+
+	public void setDone(Integer done) {
+		this.done = done;
 	}
 
 	@Override

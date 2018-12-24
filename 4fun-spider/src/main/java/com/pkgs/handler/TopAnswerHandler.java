@@ -3,11 +3,13 @@ package com.pkgs.handler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.pkgs.entity.TopAnswerEntity;
+import com.pkgs.entity.AnswerEntity;
+import com.pkgs.util.DateUtil;
 import com.pkgs.util.SysUtil;
 
 /**
@@ -17,40 +19,41 @@ import com.pkgs.util.SysUtil;
  * @author cs12110 at 2018年12月10日下午9:54:47
  *
  */
-public class TopAnswerHandler extends AbstractHandler<List<TopAnswerEntity>> {
+public class TopAnswerHandler extends AbstractHandler<List<AnswerEntity>> {
 
 	private Integer topicId;
 
-	public TopAnswerHandler(Integer topicId) {
-		super();
-		this.topicId = topicId;
+	@Override
+	public void setValue(Object value) {
+		this.topicId = Integer.parseInt(String.valueOf(value));
 	}
 
 	@Override
-	public List<TopAnswerEntity> parse(String html) {
+	public List<AnswerEntity> parse(String html) {
 		if (null == html) {
 			return Collections.emptyList();
 		}
 
-		List<TopAnswerEntity> list = new ArrayList<>();
+		List<AnswerEntity> list = new ArrayList<>();
 		try {
 			JSONObject json = JSON.parseObject(html);
 			JSONArray data = (JSONArray) json.get("data");
-			if (null != data) {
-				for (Object each : data) {
-					TopAnswerEntity entity = toEntity((JSONObject) each);
+
+			Optional.ofNullable(data).ifPresent(arr -> {
+				for (Object each : arr) {
+					AnswerEntity entity = toEntity((JSONObject) each);
 					if (null != entity) {
 						list.add(entity);
 					}
 				}
-			}
+			});
 		} catch (Exception e) {
 			logger.error("{}", e);
 		}
 		return list;
 	}
 
-	private TopAnswerEntity toEntity(JSONObject each) {
+	private AnswerEntity toEntity(JSONObject each) {
 		try {
 			JSONObject target = (JSONObject) each.get("target");
 			// 可能存在专栏,返回null
@@ -59,7 +62,7 @@ public class TopAnswerHandler extends AbstractHandler<List<TopAnswerEntity>> {
 				return null;
 			}
 
-			TopAnswerEntity answer = new TopAnswerEntity();
+			AnswerEntity answer = new AnswerEntity();
 			answer.setTopicId(topicId);
 			answer.setSummary(target.getString("excerpt"));
 			answer.setUpvoteNum(target.getInteger("voteup_count"));
@@ -76,6 +79,7 @@ public class TopAnswerHandler extends AbstractHandler<List<TopAnswerEntity>> {
 
 			String link = SysUtil.getAnswerLink(answer.getQuestionId(), answer.getAnswerId());
 			answer.setLink(link);
+			answer.setStealAt(DateUtil.getTime());
 
 			return answer;
 		} catch (Exception e) {

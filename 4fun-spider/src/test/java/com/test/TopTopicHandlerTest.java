@@ -7,11 +7,11 @@ import org.junit.Test;
 import com.pkgs.entity.TopicEntity;
 import com.pkgs.handler.AbstractHandler;
 import com.pkgs.handler.TopTopicHandler;
-import com.pkgs.service.TopicService;
+import com.pkgs.mapper.TopicMapper;
 
 public class TopTopicHandlerTest {
 
-	private TopicService service = new TopicService();
+	private TopicMapper service = new TopicMapper();
 
 	@Test
 	public void test() throws Exception {

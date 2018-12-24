@@ -50,7 +50,7 @@ public class SysUtil {
 	 *            获取长度
 	 * @return String
 	 */
-	public static String getTopicAnswerUrlOfTopic(String topicId, int offset, int limit) {
+	public static String getAnswersUrlOfTopic(String topicId, int offset, int limit) {
 		return "https://www.zhihu.com/api/v4/topics/" + topicId + "/feeds/essence?limit=" + limit + "&offset=" + offset;
 	}
 

@@ -13,7 +13,8 @@ public class SubTopicHandlerTest {
 
 	@Test
 	public void test() throws Exception {
-		AbstractHandler<List<TopicEntity>> h = new SubTopicHandler(12);
+		AbstractHandler<List<TopicEntity>> h = new SubTopicHandler();
+		h.setValue(12);
 
 		h.post(SysUtil.SUB_TOPIC_URL, SysUtil.buildSubTopicSearchMap("99", 0));
 	}

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -31,6 +33,9 @@ public abstract class AbstractHandler<T> {
 
 	public static String userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36";
 
+	public void setValue(Object value) {
+	};
+
 	/**
 	 * By get
 	 * 
@@ -38,9 +43,12 @@ public abstract class AbstractHandler<T> {
 	 */
 	public T get(String url) {
 		CloseableHttpClient client = HttpClientBuilder.create().build();
+		RequestConfig defaultConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
 		String resultStr = null;
+
 		try {
 			HttpGet get = new HttpGet(url);
+			get.setConfig(defaultConfig);
 			setUserAgent(get);
 			CloseableHttpResponse result = client.execute(get);
 			int code = result.getStatusLine().getStatusCode();
@@ -65,8 +73,10 @@ public abstract class AbstractHandler<T> {
 	/**
 	 * By post
 	 * 
-	 * @param url    url
-	 * @param params 查询参数
+	 * @param url
+	 *            url
+	 * @param params
+	 *            查询参数
 	 * @return T
 	 */
 	public T post(String url, Map<String, String> params) {
@@ -108,7 +118,8 @@ public abstract class AbstractHandler<T> {
 	/**
 	 * 转换成实体类
 	 * 
-	 * @param html html
+	 * @param html
+	 *            html
 	 * @return T
 	 */
 	public abstract T parse(String html);
@@ -116,7 +127,8 @@ public abstract class AbstractHandler<T> {
 	/**
 	 * 设置user-agent
 	 * 
-	 * @param req {@link HttpUriRequest}
+	 * @param req
+	 *            {@link HttpUriRequest}
 	 */
 	private void setUserAgent(HttpUriRequest req) {
 		req.setHeader("User-Agent", userAgent);

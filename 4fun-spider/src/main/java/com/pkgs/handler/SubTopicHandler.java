@@ -3,6 +3,7 @@ package com.pkgs.handler;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -25,8 +26,9 @@ public class SubTopicHandler extends AbstractHandler<List<TopicEntity>> {
 
 	private Integer parentId;
 
-	public SubTopicHandler(Integer parentId) {
-		this.parentId = parentId;
+	@Override
+	public void setValue(Object value) {
+		this.parentId = Integer.parseInt(String.valueOf(value));
 	}
 
 	@Override
@@ -37,17 +39,17 @@ public class SubTopicHandler extends AbstractHandler<List<TopicEntity>> {
 		try {
 			JSONObject json = JSON.parseObject(html);
 			JSONArray arr = (JSONArray) json.get("msg");
-			if (arr != null) {
-				List<TopicEntity> list = new ArrayList<TopicEntity>();
-				arr.forEach(e -> {
-					String text = String.valueOf(e);
-					TopicEntity entity = toEntity(text);
+
+			List<TopicEntity> list = new ArrayList<TopicEntity>();
+			Optional.ofNullable(arr).ifPresent(e -> {
+				e.forEach(obj -> {
+					TopicEntity entity = toEntity(String.valueOf(obj));
 					if (entity != null) {
 						list.add(entity);
 					}
 				});
-				return list;
-			}
+			});
+			return list;
 		} catch (Exception e) {
 			logger.error("{}", e);
 		}
