@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSON;
  * @see
  * @since 1.0
  */
-public class TopAnswerEntity {
+public class AnswerEntity {
 
 	private Integer id;
 	private Integer topicId;
@@ -26,6 +26,7 @@ public class TopAnswerEntity {
 	private String summary;
 	private String createAt;
 	private String updateAt;
+	private String stealAt;
 
 	public Integer getId() {
 		return id;
@@ -101,6 +102,12 @@ public class TopAnswerEntity {
 		this.updateAt = updateAt;
 	}
 
+	public String getStealAt() {
+		return stealAt;
+	}
+	public void setStealAt(String stealAt) {
+		this.stealAt = stealAt;
+	}
 	@Override
 	public String toString() {
 		return JSON.toJSONString(this);

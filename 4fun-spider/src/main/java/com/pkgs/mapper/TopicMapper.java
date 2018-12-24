@@ -1,8 +1,9 @@
-package com.pkgs.service;
+package com.pkgs.mapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.pkgs.entity.TopicEntity;
+import com.pkgs.util.DateUtil;
 import com.pkgs.util.JdbcUtil;
 import com.pkgs.util.StrUtil;
 
@@ -23,9 +25,9 @@ import com.pkgs.util.StrUtil;
  * @author cs12110 at 2018年12月10日下午10:29:08
  *
  */
-public class TopicService {
+public class TopicMapper {
 
-	private Logger logger = LoggerFactory.getLogger(TopicService.class);
+	private Logger logger = LoggerFactory.getLogger(TopicMapper.class);
 
 	/**
 	 * 保存数据
@@ -124,6 +126,10 @@ public class TopicService {
 				if (!StrUtil.isEmpty(search.getLink())) {
 					sql.append(" AND `link`=").append("'").append(search.getLink()).append("'");
 				}
+
+				if (search.getDone() != null) {
+					sql.append(" AND `done`=").append(search.getDone());
+				}
 			}
 
 			PreparedStatement stm = conn.prepareStatement(sql.toString());
@@ -146,6 +152,31 @@ public class TopicService {
 		}
 		JdbcUtil.close(conn);
 		return list;
+	}
+
+	/**
+	 * 更新爬取状态
+	 * 
+	 * @param topicId
+	 *            话题Id
+	 * @param status
+	 *            {0:未爬取,1:已爬取}
+	 */
+	public void updateDoneStatus(Integer topicId, int status) {
+		Connection conn = JdbcUtil.getConnection();
+		try {
+			String sql = "UPDATE topic_t SET done = " + status + ",update_time=\"" + DateUtil.getTime()
+					+ "\" WHERE 1=1 ";
+			if (topicId != null) {
+				sql += " AND id = " + topicId;
+			}
+			Statement stm = conn.createStatement();
+			stm.execute(sql);
+			JdbcUtil.close(stm);
+		} catch (Exception e) {
+			logger.info("{}", e);
+		}
+		JdbcUtil.close(conn);
 	}
 
 }

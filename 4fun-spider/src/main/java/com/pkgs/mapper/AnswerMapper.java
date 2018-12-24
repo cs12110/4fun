@@ -1,4 +1,4 @@
-package com.pkgs.service;
+package com.pkgs.mapper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.pkgs.entity.TopAnswerEntity;
+import com.pkgs.entity.AnswerEntity;
 import com.pkgs.util.JdbcUtil;
 import com.pkgs.util.StrUtil;
 
@@ -21,9 +21,9 @@ import com.pkgs.util.StrUtil;
  * @author cs12110 at 2018年12月10日下午10:29:08
  *
  */
-public class TopAnswerService {
+public class AnswerMapper {
 
-	private Logger logger = LoggerFactory.getLogger(TopAnswerService.class);
+	private Logger logger = LoggerFactory.getLogger(AnswerMapper.class);
 
 	/**
 	 * 保存数据
@@ -31,7 +31,7 @@ public class TopAnswerService {
 	 * @param entity
 	 * @return
 	 */
-	public boolean saveIfNotExists(TopAnswerEntity entity) {
+	public boolean saveIfNotExists(AnswerEntity entity) {
 		if (null != queryOne(entity)) {
 			logger.debug("exists:{}->{}", entity.getAuthor(), entity.getQuestion());
 			return false;
@@ -47,16 +47,16 @@ public class TopAnswerService {
 	 *            list
 	 * @return int
 	 */
-	public int save(List<TopAnswerEntity> list) {
+	public int save(List<AnswerEntity> list) {
 		int successCount = 0;
 		Connection conn = JdbcUtil.getConnection();
 		try {
 			String sql = "INSERT INTO top_answer_t(`question`,`question_id`,`author`,`answer_id`,`link`,"
-					+ "`comment_num`,`upvote_num`,`summary`,`create_at`,`update_at`,`topic_id`)"
-					+ " VALUES(?,?,?,?,?,?,?,?,?,?,?)";
+					+ "`comment_num`,`upvote_num`,`summary`,`create_at`,`update_at`,`topic_id`,`steal_at`)"
+					+ " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement stm = conn.prepareStatement(sql);
 
-			for (TopAnswerEntity e : list) {
+			for (AnswerEntity e : list) {
 
 				stm.setString(1, e.getQuestion());
 				stm.setString(2, e.getQuestionId());
@@ -69,6 +69,7 @@ public class TopAnswerService {
 				stm.setString(9, e.getCreateAt());
 				stm.setString(10, e.getUpdateAt());
 				stm.setInt(11, e.getTopicId());
+				stm.setString(12, e.getStealAt());
 
 				successCount += stm.executeUpdate();
 			}
@@ -85,10 +86,10 @@ public class TopAnswerService {
 	 * 
 	 * @param search
 	 *            查询条件
-	 * @return {@link TopAnswerEntity}
+	 * @return {@link AnswerEntity}
 	 */
-	public TopAnswerEntity queryOne(TopAnswerEntity search) {
-		List<TopAnswerEntity> list = query(search);
+	public AnswerEntity queryOne(AnswerEntity search) {
+		List<AnswerEntity> list = query(search);
 		if (list != null && !list.isEmpty()) {
 			return list.get(0);
 		}
@@ -100,10 +101,10 @@ public class TopAnswerService {
 	 * 
 	 * @param search
 	 *            查询条件
-	 * @return {@link TopAnswerEntity}
+	 * @return {@link AnswerEntity}
 	 */
-	public List<TopAnswerEntity> query(TopAnswerEntity search) {
-		List<TopAnswerEntity> list = new ArrayList<>();
+	public List<AnswerEntity> query(AnswerEntity search) {
+		List<AnswerEntity> list = new ArrayList<>();
 		Connection conn = JdbcUtil.getConnection();
 		try {
 			StringBuilder sql = new StringBuilder("SELECT * FROM top_answer_t WHERE 1=1 ");
@@ -125,7 +126,7 @@ public class TopAnswerService {
 			ResultSet resultSet = stm.executeQuery();
 
 			while (resultSet.next()) {
-				TopAnswerEntity answer = new TopAnswerEntity();
+				AnswerEntity answer = new AnswerEntity();
 				answer.setId(resultSet.getInt("id"));
 				answer.setLink(resultSet.getString("link"));
 				answer.setAuthor(resultSet.getString("author"));
@@ -133,6 +134,7 @@ public class TopAnswerService {
 				answer.setUpvoteNum(resultSet.getInt("upvote_num"));
 				answer.setCommentNum(resultSet.getInt("comment_num"));
 				answer.setSummary(resultSet.getString("summary"));
+				answer.setStealAt(resultSet.getString("steal_at"));
 				list.add(answer);
 			}
 			JdbcUtil.close(resultSet);
