@@ -5,7 +5,7 @@ import com.pkgs.entity.AnswerEntity;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * TODO: Mapper for Answer
+ * TODO: MapperXML.vm for Answer
  * <p>
  * Author: cs12110 create at: 2019/1/6 19:51
  * Since: 1.0.0
