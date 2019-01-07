@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.mapper.TopicMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.entity.TopicEntity">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="data_id" property="dataId"/>
+        <result column="name" property="name"/>
+        <result column="link" property="link"/>
+        <result column="desc" property="desc"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="done" property="done"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id` ,
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.id!=null and cm.id!=''">
+                AND `id` LIKE concat('%',#{cm.id},'%')
+            </if>
+            <if test="cm.parentId!=null and cm.parentId!=''">
+                AND `parent_id` LIKE concat('%',#{cm.parentId},'%')
+            </if>
+            <if test="cm.dataId!=null and cm.dataId!=''">
+                AND `data_id` LIKE concat('%',#{cm.dataId},'%')
+            </if>
+            <if test="cm.name!=null and cm.name!=''">
+                AND `name` LIKE concat('%',#{cm.name},'%')
+            </if>
+            <if test="cm.link!=null and cm.link!=''">
+                AND `link` LIKE concat('%',#{cm.link},'%')
+            </if>
+            <if test="cm.desc!=null and cm.desc!=''">
+                AND `desc` LIKE concat('%',#{cm.desc},'%')
+            </if>
+            <if test="cm.updateTime!=null and cm.updateTime!=''">
+                AND `update_time` LIKE concat('%',#{cm.updateTime},'%')
+            </if>
+            <if test="cm.done!=null and cm.done!=''">
+                AND `done` LIKE concat('%',#{cm.done},'%')
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+    </select>
+
+    <select id="queryTopTopics" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+        parent_id IS NULL
+    </select>
+
+    <select id="queryTopics" resultMap="resultMap">
+        SELECT DISTINCT
+        topic_t.*
+        FROM
+        topic_t
+        LEFT JOIN top_answer_t ON top_answer_t.topic_id = topic_t.id
+        WHERE
+        topic_t.parent_id = #{parent_id}
+        AND topic_id IS NOT NULL
+    </select>
+</mapper>

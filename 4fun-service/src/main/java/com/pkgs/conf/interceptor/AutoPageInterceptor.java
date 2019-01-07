@@ -1,4 +1,4 @@
-package com.pkgs.conf;
+package com.pkgs.conf.interceptor;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @Configuration
 @MapperScan("com.pkgs.mapper")
-public class PagenationInterceptor {
+public class AutoPageInterceptor {
 
     /**
      * 分页插件

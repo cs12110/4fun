@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
  * TODO: Spring service
  * <p>
  *
- * @author: cs12110 create at: 2019/1/6 17:09
+ * @author cs12110 create at: 2019/1/6 17:09
  * Since: 1.0.0
  */
 @SpringBootApplication

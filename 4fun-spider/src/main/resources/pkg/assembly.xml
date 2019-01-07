@@ -28,13 +28,13 @@
 			</includes>
 		</fileSet>
 
-		<fileSet>
+		<!--<fileSet>
 			<directory>${project.build.directory}/classes/pkg</directory>
 			<outputDirectory>/pkg</outputDirectory>
 			<includes>
 				<include>*.xml</include>
 			</includes>
-		</fileSet>
+		</fileSet>-->
 
 
 		<!-- 把项目自己编译出来的jar文件，打包进zip文件的根目录 -->

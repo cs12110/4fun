@@ -1,4 +1,4 @@
-package com.pkgs.aop.anno;
+package com.pkgs.conf.anno;
 
 import java.lang.annotation.*;
 

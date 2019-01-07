@@ -1,6 +1,7 @@
-package com.pkgs.aop.detector;
+package com.pkgs.conf.interceptor;
 
 import com.alibaba.fastjson.JSON;
+import com.pkgs.conf.anno.AntiResubmitAnno;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -27,9 +28,9 @@ import java.util.function.Supplier;
  */
 @Aspect
 @Component
-public class AntiResubmitAop {
+public class AntiResubmitInterceptor {
 
-    private static Logger logger = LoggerFactory.getLogger(AntiResubmitAop.class);
+    private static Logger logger = LoggerFactory.getLogger(AntiResubmitInterceptor.class);
 
     /**
      * 防止重复提交提示map
@@ -42,9 +43,9 @@ public class AntiResubmitAop {
     };
 
     /**
-     * 拦截所有带有{@link com.pkgs.aop.anno.AntiResubmitAnno }注解的方法
+     * 拦截所有带有{@link AntiResubmitAnno }注解的方法
      */
-    @Pointcut("@annotation(com.pkgs.aop.anno.AntiResubmitAnno)")
+    @Pointcut("@annotation(com.pkgs.conf.anno.AntiResubmitAnno)")
     public void aop() {
 
     }
@@ -56,32 +57,32 @@ public class AntiResubmitAop {
      */
     @Around("aop()")
     public Object handle(ProceedingJoinPoint joinPoint) {
-        try {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
-                    .getRequestAttributes();
-            if (null != attributes) {
-                HttpServletRequest request = attributes.getRequest();
-                HttpSession session = request.getSession(true);
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder
+                .getRequestAttributes();
+        if (null != attributes) {
+            HttpServletRequest request = attributes.getRequest();
+            HttpSession session = request.getSession(true);
 
-                String sessionId = session.getId();
-                String reqUrl = request.getRequestURI();
-                String key = sessionId + "#" + reqUrl;
-                Object value = session.getAttribute(key);
+            String sessionId = session.getId();
+            String reqUrl = request.getRequestURI();
+            String key = sessionId + "#" + reqUrl;
+            Object value = session.getAttribute(key);
 
 
-                if (value == null) {
+            if (value == null) {
+                try {
                     session.setAttribute(key, System.currentTimeMillis());
                     Object result = joinPoint.proceed();
                     session.removeAttribute(key);
                     return result;
-                } else {
-                    logger.error("anti: {} resubmit", reqUrl);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                    session.removeAttribute(key);
                 }
+            } else {
+                logger.error("anti: {} resubmit", reqUrl);
             }
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
-
         return JSON.toJSONString(resubmitMapErrSupplier.get());
     }
 }

@@ -48,5 +48,6 @@
         FROM
         top_answer_t
         <include refid="querySql"/>
+        ORDER BY upvote_num DESC
     </select>
 </mapper>

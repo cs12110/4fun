@@ -29,6 +29,7 @@ public class AutoGenUtil {
         StringBuilder builder = new StringBuilder(filedName.length());
         for (char ch : filedName.toCharArray()) {
             if (ch >= 'A' && ch <= 'Z') {
+                builder.append("_");
                 builder.append((char) (ch + 32));
             } else {
                 builder.append(ch);

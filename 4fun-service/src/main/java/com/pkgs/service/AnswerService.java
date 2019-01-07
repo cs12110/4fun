@@ -14,7 +14,7 @@ import java.util.Map;
  * TODO:
  * <p>
  *
- * @author: cs12110 create at: 2019/1/6 19:56
+ * @author cs12110 create at: 2019/1/6 19:56
  * Since: 1.0.0
  */
 @Service
@@ -23,14 +23,11 @@ public class AnswerService {
     @Autowired
     private AnswerMapper answerMapper;
 
-    public List<AnswerEntity> query(Integer pageIndex, Integer pageSize) {
-        Page<AnswerEntity> page = new Page<>(pageIndex, pageSize);
-        List<AnswerEntity> entities = answerMapper.selectByMap(page, new HashMap<>(1));
+    public List<AnswerEntity> query(String topicId, Page page) {
+        //查询参数
+        HashMap<String, Object> searchMap = new HashMap<>(1);
+        searchMap.put("topicId", topicId);
 
-        for (AnswerEntity a : entities) {
-            System.out.println(a.toString());
-        }
-
-        return entities;
+        return answerMapper.selectByMap(page, searchMap);
     }
 }
