@@ -20,10 +20,10 @@
 		</encoder>
 	</appender>
 
-	<logger name="com.pkgs.service.TopicService" level="INFO"></logger>
-	<logger name="com.pkgs.service.ProcessService" level="INFO"></logger>
+	<logger name="com.pkgs.mapper.TopicMapper" level="INFO"></logger>
+	<logger name="com.pkgs.mapper.AnswerMapper" level="INFO"></logger>
 
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</root>

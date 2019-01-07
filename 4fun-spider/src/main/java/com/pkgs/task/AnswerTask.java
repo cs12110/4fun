@@ -32,7 +32,7 @@ public class AnswerTask implements Runnable {
 	private static TopicMapper topicMapper = new TopicMapper();
 	private static AnswerMapper answerMapper = new AnswerMapper();
 
-	private static int threadNum = 3;
+	private static int threadNum = 2;
 	private static ExecutorService pool = Executors.newFixedThreadPool(threadNum);
 
 	private static long minUpvoteNum = Long.parseLong(PropertiesUtil.get("upvote.minNum", "10000"));
@@ -75,6 +75,8 @@ public class AnswerTask implements Runnable {
 			}
 			try {
 				countDownLatch.await();
+				int sleep = 1000 * 1 + (int) (Math.random() * 3000);
+				Thread.sleep(sleep);
 			} catch (Exception e) {
 			}
 

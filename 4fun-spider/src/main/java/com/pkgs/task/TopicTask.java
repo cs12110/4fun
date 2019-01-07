@@ -68,6 +68,8 @@ public class TopicTask implements Runnable {
 							.forEach(sub -> {
 								topicMapper.saveIfNotExists(sub);
 							});
+
+					Thread.sleep(1000 * 30);
 				}
 			} catch (Exception ex) {
 				logger.error("{}", ex);
