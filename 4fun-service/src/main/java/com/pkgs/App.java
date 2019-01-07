@@ -15,13 +15,13 @@ import javax.annotation.PostConstruct;
  * Since: 1.0.0
  */
 @SpringBootApplication
-public class ServiceApp {
+public class App {
 
-    private static Logger logger = LoggerFactory.getLogger(ServiceApp.class);
+    private static Logger logger = LoggerFactory.getLogger(App.class);
 
 
     public static void main(String[] args) {
-        SpringApplication.run(ServiceApp.class, args);
+        SpringApplication.run(App.class, args);
     }
 
 
