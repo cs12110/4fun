@@ -48,6 +48,5 @@
         FROM
         top_answer_t
         <include refid="querySql"/>
-        LIMIT 1
     </select>
 </mapper>

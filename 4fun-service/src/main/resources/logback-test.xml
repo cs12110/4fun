@@ -20,8 +20,9 @@
         </encoder>
     </appender>
 
+    <logger name="com.pkgs.mapper" level="DEBUG"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>
