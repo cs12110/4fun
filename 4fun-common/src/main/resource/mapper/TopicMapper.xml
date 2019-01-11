@@ -71,7 +71,7 @@
         </where>
     </sql>
 
-    <insert id="save" parameterType="com.pkgs.entity.TopicEntity">
+    <insert id="save" parameterType="com.pkgs.entity.TopicEntity"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO topic_t(
         `parent_id` ,
         `data_id` ,

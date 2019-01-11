@@ -1,8 +1,13 @@
 package com.pkgs.service;
 
 import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.MapTopicAnswerEntity;
+import com.pkgs.mapper.AnswerMapper;
+import com.pkgs.mapper.MapTopicAnswerMapper;
 import com.pkgs.util.JdbcUtil;
+import com.pkgs.util.SqlSessionUtil;
 import com.pkgs.util.SysUtil;
+import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,71 +33,66 @@ public class AnswerService {
     /**
      * 保存数据
      *
-     * @param entity
-     * @return
+     * @param entity entity
+     * @return boolean
      */
     public boolean saveIfNotExists(AnswerEntity entity) {
-        if (null != queryOne(entity)) {
-            logger.debug("exists:{}->{}", entity.getAuthor(), entity.getQuestion());
-            return false;
-        }
-        logger.info("save:{}->{}", entity.getAuthor(), entity.getQuestion());
-        return 1 == save(Arrays.asList(entity));
-    }
-
-    /**
-     * 保存数据
-     *
-     * @param list list
-     * @return int
-     */
-    public int save(List<AnswerEntity> list) {
-        int successCount = 0;
-        Connection conn = JdbcUtil.getConnection();
+        SqlSession sqlSession = SqlSessionUtil.openSession();
         try {
-            String sql = "INSERT INTO top_answer_t(`question`,`question_id`,`author`,`answer_id`,`link`,"
-                    + "`comment_num`,`upvote_num`,`summary`,`create_at`,`update_at`,`topic_id`,`steal_at`)"
-                    + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?)";
-            PreparedStatement stm = conn.prepareStatement(sql);
+            AnswerMapper mapper = sqlSession.getMapper(AnswerMapper.class);
 
-            for (AnswerEntity e : list) {
-
-                stm.setString(1, e.getQuestion());
-                stm.setString(2, e.getQuestionId());
-                stm.setString(3, e.getAuthor());
-                stm.setString(4, e.getAnswerId());
-                stm.setString(5, e.getLink());
-                stm.setInt(6, e.getCommentNum());
-                stm.setInt(7, e.getUpvoteNum());
-                stm.setString(8, e.getSummary());
-                stm.setString(9, e.getCreateAt());
-                stm.setString(10, e.getUpdateAt());
-                stm.setInt(11, e.getTopicId());
-                stm.setString(12, e.getStealAt());
-
-                successCount += stm.executeUpdate();
+            /*
+             * 1. 判断answer在不在
+             *
+             * 2. 如果answer不存在,则新增进去,同时新增关系
+             */
+            Integer answerId = mapper.selectIdByLink(entity.getLink());
+            if (answerId != null) {
+                logger.debug("exists:{}->{}", entity.getAuthor(), entity.getQuestion());
+            } else {
+                mapper.save(entity);
+                answerId = entity.getId();
+                logger.info("save:{}->{}", entity.getAuthor(), entity.getQuestion());
             }
-            JdbcUtil.close(stm);
+            sqlSession.commit();
+            //处理关系
+            mappingTopicAnswer(entity.getTopicId(), answerId);
         } catch (Exception e) {
-            logger.info("{}", e);
+            logger.error("{}", e);
+        } finally {
+            SqlSessionUtil.closeSession(sqlSession);
         }
-        JdbcUtil.close(conn);
-        return successCount;
+        return true;
     }
+
 
     /**
-     * 查询一条数据
+     * 添加关系
      *
-     * @param search 查询条件
-     * @return {@link AnswerEntity}
+     * @param topicId  话题
+     * @param answerId 答案
      */
-    public AnswerEntity queryOne(AnswerEntity search) {
-        List<AnswerEntity> list = query(search);
-        if (list != null && !list.isEmpty()) {
-            return list.get(0);
+    private void mappingTopicAnswer(Integer topicId, Integer answerId) {
+        SqlSession sqlSession = SqlSessionUtil.openSession();
+        try {
+            MapTopicAnswerMapper mapper = sqlSession.getMapper(MapTopicAnswerMapper.class);
+
+            MapTopicAnswerEntity search = new MapTopicAnswerEntity();
+            search.setTopicId(topicId);
+            search.setAnswerId(answerId);
+            int count = mapper.selectCount(search);
+
+            if (count == 0) {
+                mapper.save(search);
+                sqlSession.commit();
+            }
+        } catch (Exception e) {
+            logger.error("{}", e);
+        } finally {
+            SqlSessionUtil.closeSession(sqlSession);
         }
-        return null;
     }
+
 
     /**
      * 查询数据

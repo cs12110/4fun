@@ -78,8 +78,41 @@
         </where>
     </sql>
 
+    <insert id="save" parameterType="com.pkgs.entity.AnswerEntity"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO top_answer_t(
+            `topic_id` ,
+            `question` ,
+            `question_id` ,
+            `answer_id` ,
+            `author` ,
+            `link` ,
+            `upvote_num` ,
+            `comment_num` ,
+            `summary` ,
+            `create_at` ,
+            `update_at` ,
+            `steal_at`
+        ) VALUES(
+            #{topicId},
+            #{question},
+            #{questionId},
+            #{answerId},
+            #{author},
+            #{link},
+            #{upvoteNum},
+            #{commentNum},
+            #{summary},
+            #{createAt},
+            #{updateAt},
+            #{stealAt}
+        )
+    </insert>
 
-    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+    <select id="selectIdByLink" resultType="java.lang.Integer">
+        SELECT id FROM top_answer_t WHERE link = #{link}
+    </select>
+
+    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map" >
         SELECT
         <include refid="fields"/>
         FROM

@@ -1,5 +1,6 @@
 package com.pkgs;
 
+import com.pkgs.task.AnswerTask;
 import com.pkgs.task.TopicTask;
 
 /**
@@ -10,7 +11,9 @@ import com.pkgs.task.TopicTask;
 public class App {
 
     public static void main(String[] args) {
+
         new Thread(new TopicTask()).start();
+        new Thread(new AnswerTask()).start();
     }
 
 

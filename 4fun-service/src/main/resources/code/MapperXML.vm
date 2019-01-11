@@ -27,7 +27,7 @@
     </sql>
 
     <insert id="save" parameterType="${entityName}">
-        INSERT INTO topic_t(
+        INSERT INTO ${tableName}(
             #foreach ($f in $fields)
             `${f.columnName}` #if($foreach.hasNext),#end
 
@@ -46,5 +46,13 @@
         FROM
             ${tableName}
         WHERE
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="${entityName}">
+        SELECT
+            COUNT(*)
+        FROM
+            ${tableName}
+        <include refid="search"/>
     </select>
 </mapper>

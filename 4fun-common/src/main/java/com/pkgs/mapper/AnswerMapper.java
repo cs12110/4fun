@@ -25,7 +25,7 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @param answer answer
      * @return int
      */
-    int save(@Param("obj") AnswerEntity answer);
+    int save(AnswerEntity answer);
 
     /**
      * 统计符合条件的数据
@@ -34,6 +34,14 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @return int
      */
     int selectCount(@Param("obj") AnswerEntity answer);
+
+    /**
+     * 根据连接获取id
+     *
+     * @param link 连接
+     * @return Integer
+     */
+    Integer selectIdByLink(String link);
 
     /**
      * 分页查询

@@ -19,6 +19,7 @@
     <mappers>
         <mapper resource="mapper/TopicMapper.xml"/>
         <mapper resource="mapper/AnswerMapper.xml"/>
+        <mapper resource="mapper/MapTopicAnswerMapper.xml"/>
     </mappers>
 
 </configuration>
