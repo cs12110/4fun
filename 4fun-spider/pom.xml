@@ -96,8 +96,7 @@
                     <!-- 过滤掉不希望包含在jar中的配置文件 -->
                     <excludes>
                         <!--<exclude>*.xml</exclude>-->
-                        <exclude>*.properties</exclude>
-                        <exclude>pkg/*.xml</exclude>
+                        <!--<exclude>*.properties</exclude>-->
                     </excludes>
                 </configuration>
             </plugin>

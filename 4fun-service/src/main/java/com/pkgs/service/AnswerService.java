@@ -1,14 +1,14 @@
 package com.pkgs.service;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.AnswerEntity;
-import com.pkgs.mapper.AnswerMapper;
+import java.util.HashMap;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.pkgs.entity.AnswerEntity;
+import com.pkgs.mapper.AnswerMapper;
 
 /**
  * TODO:
@@ -23,7 +23,7 @@ public class AnswerService {
     @Autowired
     private AnswerMapper answerMapper;
 
-    public List<AnswerEntity> query(String topicId, Page page) {
+    public List<AnswerEntity> query(String topicId, Page<AnswerEntity> page) {
         //查询参数
         HashMap<String, Object> searchMap = new HashMap<>(1);
         searchMap.put("topicId", topicId);

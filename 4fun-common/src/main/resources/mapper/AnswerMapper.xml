@@ -34,41 +34,41 @@
 
     <sql id="search">
         <where>
-            <if test="obj.id != null and obj.id != ''">
-                AND `id` LIKE concat('%',#{obj.id},'%')
+            <if test="cm.id != null and cm.id != ''">
+                AND `id` LIKE concat('%',#{cm.id},'%')
             </if>
-               <if test="obj.question != null and obj.question != ''">
-                AND `question` LIKE concat('%',#{obj.question},'%')
+               <if test="cm.question != null and cm.question != ''">
+                AND `question` LIKE concat('%',#{cm.question},'%')
             </if>
-            <if test="obj.questionId != null and obj.questionId != ''">
-                AND `question_id` LIKE concat('%',#{obj.questionId},'%')
+            <if test="cm.questionId != null and cm.questionId != ''">
+                AND `question_id` LIKE concat('%',#{cm.questionId},'%')
             </if>
-            <if test="obj.answerId != null and obj.answerId != ''">
-                AND `answer_id` LIKE concat('%',#{obj.answerId},'%')
+            <if test="cm.answerId != null and cm.answerId != ''">
+                AND `answer_id` LIKE concat('%',#{cm.answerId},'%')
             </if>
-            <if test="obj.author != null and obj.author != ''">
-                AND `author` LIKE concat('%',#{obj.author},'%')
+            <if test="cm.author != null and cm.author != ''">
+                AND `author` LIKE concat('%',#{cm.author},'%')
             </if>
-            <if test="obj.link != null and obj.link != ''">
-                AND `link` LIKE concat('%',#{obj.link},'%')
+            <if test="cm.link != null and cm.link != ''">
+                AND `link` LIKE concat('%',#{cm.link},'%')
             </if>
-            <if test="obj.upvoteNum != null and obj.upvoteNum != ''">
-                AND `upvote_num` LIKE concat('%',#{obj.upvoteNum},'%')
+            <if test="cm.upvoteNum != null and cm.upvoteNum != ''">
+                AND `upvote_num` LIKE concat('%',#{cm.upvoteNum},'%')
             </if>
-            <if test="obj.commentNum != null and obj.commentNum != ''">
-                AND `comment_num` LIKE concat('%',#{obj.commentNum},'%')
+            <if test="cm.commentNum != null and cm.commentNum != ''">
+                AND `comment_num` LIKE concat('%',#{cm.commentNum},'%')
             </if>
-            <if test="obj.summary != null and obj.summary != ''">
-                AND `summary` LIKE concat('%',#{obj.summary},'%')
+            <if test="cm.summary != null and cm.summary != ''">
+                AND `summary` LIKE concat('%',#{cm.summary},'%')
             </if>
-            <if test="obj.createAt != null and obj.createAt != ''">
-                AND `create_at` LIKE concat('%',#{obj.createAt},'%')
+            <if test="cm.createAt != null and cm.createAt != ''">
+                AND `create_at` LIKE concat('%',#{cm.createAt},'%')
             </if>
-            <if test="obj.updateAt != null and obj.updateAt != ''">
-                AND `update_at` LIKE concat('%',#{obj.updateAt},'%')
+            <if test="cm.updateAt != null and cm.updateAt != ''">
+                AND `update_at` LIKE concat('%',#{cm.updateAt},'%')
             </if>
-            <if test="obj.stealAt != null and obj.stealAt != ''">
-                AND `steal_at` LIKE concat('%',#{obj.stealAt},'%')
+            <if test="cm.stealAt != null and cm.stealAt != ''">
+                AND `steal_at` LIKE concat('%',#{cm.stealAt},'%')
             </if>
         </where>
     </sql>

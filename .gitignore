@@ -2,3 +2,12 @@
 **.log
 **/.idea/**
 **.iml
+**.classpath
+**/.settings/**
+**.project
+
+4fun-common/.gitignore
+4fun-service/.gitignore
+4fun-spider/.gitignore
+4fun-web/.gitignore
+

@@ -19,38 +19,42 @@ import java.util.Map;
 @Mapper
 public interface AnswerMapper extends BaseMapper<AnswerEntity> {
 
-    /**
-     * 新增
-     *
-     * @param answer answer
-     * @return int
-     */
-    int save(AnswerEntity answer);
+	/**
+	 * 新增
+	 *
+	 * @param answer
+	 *            answer
+	 * @return int
+	 */
+	int save(AnswerEntity answer);
 
-    /**
-     * 统计符合条件的数据
-     *
-     * @param answer 查询条件
-     * @return int
-     */
-    int selectCount(@Param("obj") AnswerEntity answer);
+	/**
+	 * 统计符合条件的数据
+	 *
+	 * @param answer
+	 *            查询条件
+	 * @return int
+	 */
+	int selectCount(@Param("cm") AnswerEntity answer);
 
-    /**
-     * 根据连接获取id
-     *
-     * @param link 连接
-     * @return Integer
-     */
-    Integer selectIdByLink(String link);
+	/**
+	 * 根据连接获取id
+	 *
+	 * @param link
+	 *            连接
+	 * @return Integer
+	 */
+	Integer selectIdByLink(String link);
 
-    /**
-     * 分页查询
-     *
-     * @param page      分页参数
-     * @param columnMap 查询条件
-     * @return List
-     */
-    List<AnswerEntity> selectByMap(Page page, @Param("obj") Map<String, Object> columnMap);
-
+	/**
+	 * 分页查询
+	 *
+	 * @param page
+	 *            分页参数
+	 * @param columnMap
+	 *            查询条件
+	 * @return List
+	 */
+	List<AnswerEntity> selectByMap(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
 
 }

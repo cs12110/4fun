@@ -1,14 +1,10 @@
 package com.pkgs.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.AnswerEntity;
-import com.pkgs.entity.MapTopicAnswerEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-import java.util.Map;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.pkgs.entity.MapTopicAnswerEntity;
 
 /**
  * TODO: MapperXML.vm for MapTopicAnswer

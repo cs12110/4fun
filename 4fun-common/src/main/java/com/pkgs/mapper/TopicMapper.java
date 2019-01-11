@@ -51,7 +51,7 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @param columnMap 查询条件
      * @return List
      */
-    List<TopicEntity> selectByMap(Page page, @Param("obj") Map<String, Object> columnMap);
+    List<TopicEntity> selectByMap(Page<TopicEntity> page, @Param("obj") Map<String, Object> columnMap);
 
 
     /**

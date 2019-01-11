@@ -62,6 +62,13 @@
                 <directory>src/main/resources</directory>
                 <targetPath>${project.build.directory}/classes</targetPath>
             </resource>
+
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**.xml</include>
+                </includes>
+            </resource>
         </resources>
         <plugins>
             <!-- 设置源文件编码方式 -->
@@ -97,10 +104,11 @@
                         </manifest>
                     </archive>
                     <!-- 过滤掉不希望包含在jar中的配置文件 -->
-                    <excludes>
+                    <!--<excludes>
                         <exclude>*.properties</exclude>
                         <exclude>pkg/*.xml</exclude>
-                    </excludes>
+                    </excludes>-->
+
                 </configuration>
             </plugin>
 
