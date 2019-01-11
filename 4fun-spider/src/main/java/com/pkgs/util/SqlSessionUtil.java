@@ -5,6 +5,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 
 import java.io.InputStream;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * Sql session util
@@ -60,6 +63,36 @@ public class SqlSessionUtil {
     public static void closeSession(SqlSession session) {
         if (null != session) {
             session.close();
+        }
+    }
+
+    public static class ProxyMapper implements InvocationHandler {
+
+        @SuppressWarnings("unchecked")
+        public static <T> T wrapper(Class<T> mapperClass) {
+            Class[] interfaces = {mapperClass};
+            return (T) Proxy.newProxyInstance(mapperClass.getClassLoader(), interfaces, new ProxyMapper(mapperClass));
+        }
+
+        private Class<?> mapper;
+
+        ProxyMapper(Class<?> mapper) {
+            this.mapper = mapper;
+        }
+
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) {
+            SqlSession session = SqlSessionUtil.openSession();
+            Object result = null;
+            try {
+                result = method.invoke(session.getMapper(this.mapper), args);
+                session.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                session.close();
+            }
+            return result;
         }
     }
 }
