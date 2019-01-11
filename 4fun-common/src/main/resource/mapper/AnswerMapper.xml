@@ -4,7 +4,6 @@
 
     <resultMap id="resultMap" type="com.pkgs.entity.AnswerEntity">
         <id column="id" property="id" jdbcType="INTEGER"/>
-        <result column="topic_id" property="topicId"/>
         <result column="question" property="question"/>
         <result column="question_id" property="questionId"/>
         <result column="answer_id" property="answerId"/>
@@ -20,7 +19,6 @@
 
     <sql id="fields">
         id,
-        topic_id,
         question,
         question_id,
         answer_id,
@@ -39,10 +37,7 @@
             <if test="obj.id != null and obj.id != ''">
                 AND `id` LIKE concat('%',#{obj.id},'%')
             </if>
-            <if test="obj.topicId != null and obj.topicId != ''">
-                AND `topic_id` LIKE concat('%',#{obj.topicId},'%')
-            </if>
-            <if test="obj.question != null and obj.question != ''">
+               <if test="obj.question != null and obj.question != ''">
                 AND `question` LIKE concat('%',#{obj.question},'%')
             </if>
             <if test="obj.questionId != null and obj.questionId != ''">
@@ -80,7 +75,6 @@
 
     <insert id="save" parameterType="com.pkgs.entity.AnswerEntity"  useGeneratedKeys="true" keyProperty="id">
         INSERT INTO top_answer_t(
-            `topic_id` ,
             `question` ,
             `question_id` ,
             `answer_id` ,
@@ -93,7 +87,6 @@
             `update_at` ,
             `steal_at`
         ) VALUES(
-            #{topicId},
             #{question},
             #{questionId},
             #{answerId},

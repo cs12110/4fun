@@ -8,7 +8,6 @@ import java.util.stream.Collectors;
 
 import com.pkgs.service.AnswerService;
 import com.pkgs.service.TopicService;
-import net.sf.jsqlparser.statement.create.view.TemporaryOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,16 +30,17 @@ public class AnswerTask implements Runnable {
     private static TopicService topicService = new TopicService();
     private static AnswerService answerService = new AnswerService();
 
-    private static int threadNum = 2;
-    private static ExecutorService pool = Executors.newFixedThreadPool(threadNum);
+    private static final int THREAD_NUM = 2;
+    private static ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
 
-    private static int sleepSeconds = Integer.parseInt(PropertiesUtil.get("sleep.seconds", "5000"));
-    private static long minUpvoteNum = Long.parseLong(PropertiesUtil.get("upvote.minNum", "10000"));
+    /**
+     * 最小点赞数
+     */
+    private static long miniVoteNum = Long.parseLong(PropertiesUtil.get("upVote.minNum", "10000"));
 
     @Override
     public void run() {
-
-        while (true) {
+        for (; ; ) {
             logger.info("start working at get top answer");
             long start = System.currentTimeMillis();
 
@@ -50,23 +50,20 @@ public class AnswerTask implements Runnable {
 
             long end = System.currentTimeMillis();
             logger.info("get top answer is done,spend:{}", (end - start));
+
             // 休息一个小时
-            try {
-                Thread.sleep(1000 * 3600 * 6);
-            } catch (Exception e) {
-                //do nothing
-            }
+            SysUtil.justStandingHere(3600);
         }
     }
 
     private void execute() {
         List<TopicEntity> topicList = getRemainTopics();
         int size = topicList.size();
-        int limit = size % threadNum == 0 ? size / threadNum : size / threadNum + 1;
+        int limit = getPageNum(size, THREAD_NUM);
 
         for (int index = 0; index < limit; index++) {
-            int start = index * threadNum;
-            int end = start + threadNum > size ? size : start + threadNum;
+            int start = index * THREAD_NUM;
+            int end = start + THREAD_NUM > size ? size : start + THREAD_NUM;
 
             List<TopicEntity> partList = topicList.subList(start, end);
             CountDownLatch countDownLatch = new CountDownLatch(partList.size());
@@ -76,13 +73,27 @@ public class AnswerTask implements Runnable {
             }
             try {
                 countDownLatch.await();
-                int sleep = sleepSeconds + (int) (Math.random() * sleepSeconds);
-                Thread.sleep(sleep);
             } catch (Exception e) {
                 //do nothing
             }
+
+            int sleep = 5 + (int) (Math.random() * 5);
+            SysUtil.justStandingHere(sleep);
         }
     }
+
+    /**
+     * 获取分页数量
+     *
+     * @param size     列表大小
+     * @param pageSize 分页大小
+     * @return int
+     */
+    private int getPageNum(int size, int pageSize) {
+        int tmp = size / pageSize;
+        return size % pageSize == 0 ? tmp : tmp + 1;
+    }
+
 
     private List<TopicEntity> getRemainTopics() {
         // 获取需要爬取的话题
@@ -106,7 +117,7 @@ public class AnswerTask implements Runnable {
         @Override
         public void run() {
             AbstractHandler<List<AnswerEntity>> handler = new TopAnswerHandler();
-            logger.info("get top answer of: {} -> {} ", entity.getId(), entity.getName());
+            logger.info("Get answer of: [{}]{} ", entity.getId(), entity.getName());
             int page = 20;
             int count = 0;
             boolean gt = true;
@@ -119,7 +130,7 @@ public class AnswerTask implements Runnable {
                 // 处理每一条数据
                 for (AnswerEntity a : handler.get(url)) {
                     // 点赞数小于1k
-                    if (a.getUpvoteNum() < minUpvoteNum) {
+                    if (a.getUpvoteNum() < miniVoteNum) {
                         gt = false;
                         break;
                     }
@@ -132,7 +143,7 @@ public class AnswerTask implements Runnable {
             topicService.updateDoneStatus(entity.getId(), 1);
             latch.countDown();
 
-            logger.info("get top answer of: {} -> {} is done ,add: {}", entity.getId(), entity.getName(), count);
+            logger.info("Get: [{}]{} is done ,add: {}", entity.getId(), entity.getName(), count);
         }
     }
 

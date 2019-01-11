@@ -3,19 +3,15 @@ package com.pkgs.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.TopicEntity;
 import com.pkgs.mapper.TopicMapper;
-import com.pkgs.util.JdbcUtil;
 import com.pkgs.util.SqlSessionUtil;
-import com.pkgs.util.SysUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 话题
@@ -40,8 +36,13 @@ public class TopicService {
         // 这里好像可以用动态代理来抽取
         SqlSession sqlSession = SqlSessionUtil.openSession();
         try {
+
+            TopicEntity search = new TopicEntity();
+            search.setName(entity.getName());
+            search.setLink(entity.getLink());
+
             TopicMapper mapper = sqlSession.getMapper(TopicMapper.class);
-            int count = mapper.selectCount(entity);
+            int count = mapper.selectCount(search);
             if (count == 0) {
                 mapper.save(entity);
                 logger.info("save:{}", entity.getName());
