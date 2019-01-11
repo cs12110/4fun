@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.pkgs.util.SysUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,7 +14,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pkgs.entity.TopicEntity;
-import com.pkgs.util.DateUtil;
 
 /**
  * 话题转换类
@@ -73,7 +73,7 @@ public class SubTopicHandler extends AbstractHandler<List<TopicEntity>> {
 			entity.setParentId(parentId);
 			entity.setName(name);
 			entity.setLink(link);
-			entity.setUpdateTime(DateUtil.getTime());
+			entity.setUpdateTime(SysUtil.getTime());
 			return entity;
 		} catch (Exception e) {
 			e.printStackTrace();

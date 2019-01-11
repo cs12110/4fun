@@ -19,12 +19,26 @@
     <sql id="search">
          <where>
             #foreach ($f in $fields)
-            <if test="cm.${f.fieldName}!=null and cm.${f.fieldName}!=''">
-                AND `${f.columnName}` LIKE concat('%',#{cm.${f.fieldName}},'%')
+            <if test="obj.${f.fieldName} != null and obj.${f.fieldName} != ''">
+                AND `${f.columnName}` LIKE concat('%',#{obj.${f.fieldName}},'%')
             </if>
             #end
          </where>
     </sql>
+
+    <insert id="save" parameterType="${entityName}">
+        INSERT INTO topic_t(
+            #foreach ($f in $fields)
+            `${f.columnName}` #if($foreach.hasNext),#end
+
+            #end
+        ) VALUES(
+            #foreach ($f in $fields)
+            #{${f.fieldName}}#if($foreach.hasNext),#end
+
+            #end
+        )
+    </insert>
 
     <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
         SELECT

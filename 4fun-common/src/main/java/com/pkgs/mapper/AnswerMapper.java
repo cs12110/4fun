@@ -20,11 +20,29 @@ import java.util.Map;
 public interface AnswerMapper extends BaseMapper<AnswerEntity> {
 
     /**
+     * 新增
+     *
+     * @param answer answer
+     * @return int
+     */
+    int save(@Param("obj") AnswerEntity answer);
+
+    /**
+     * 统计符合条件的数据
+     *
+     * @param answer 查询条件
+     * @return int
+     */
+    int selectCount(@Param("obj") AnswerEntity answer);
+
+    /**
      * 分页查询
      *
      * @param page      分页参数
      * @param columnMap 查询条件
      * @return List
      */
-    List<AnswerEntity> selectByMap(Page page, @Param("cm") Map<String, Object> columnMap);
+    List<AnswerEntity> selectByMap(Page page, @Param("obj") Map<String, Object> columnMap);
+
+
 }

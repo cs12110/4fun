@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
+import com.pkgs.service.AnswerService;
+import com.pkgs.service.TopicService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +15,6 @@ import com.pkgs.entity.AnswerEntity;
 import com.pkgs.entity.TopicEntity;
 import com.pkgs.handler.AbstractHandler;
 import com.pkgs.handler.TopAnswerHandler;
-import com.pkgs.mapper.AnswerMapper;
-import com.pkgs.mapper.TopicMapper;
 import com.pkgs.util.PropertiesUtil;
 import com.pkgs.util.SysUtil;
 
@@ -27,8 +27,8 @@ public class AnswerTask implements Runnable {
 
     private static Logger logger = LoggerFactory.getLogger(AnswerTask.class);
 
-    private static TopicMapper topicMapper = new TopicMapper();
-    private static AnswerMapper answerMapper = new AnswerMapper();
+    private static TopicService topicService = new TopicService();
+    private static AnswerService answerService = new AnswerService();
 
     private static int threadNum = 2;
     private static ExecutorService pool = Executors.newFixedThreadPool(threadNum);
@@ -45,7 +45,7 @@ public class AnswerTask implements Runnable {
 
             execute();
             // 重新设置爬取
-            topicMapper.updateDoneStatus(null, 0);
+            topicService.updateDoneStatus(null, 0);
 
             long end = System.currentTimeMillis();
             logger.info("get top answer is done,spend:{}", (end - start));
@@ -88,7 +88,7 @@ public class AnswerTask implements Runnable {
         TopicEntity search = new TopicEntity();
         search.setDone(0);
 
-        return topicMapper
+        return topicService
                 .query(search)
                 .stream()
                 .filter(e -> null != e.getLink() && !"".equals(e.getLink().trim()))
@@ -124,13 +124,13 @@ public class AnswerTask implements Runnable {
                         gt = false;
                         break;
                     }
-                    count += answerMapper.saveIfNotExists(a) ? 1 : 0;
+                    count += answerService.saveIfNotExists(a) ? 1 : 0;
                 }
                 if (!gt) {
                     break;
                 }
             }
-            topicMapper.updateDoneStatus(entity.getId(), 1);
+            topicService.updateDoneStatus(entity.getId(), 1);
             latch.countDown();
 
             logger.info("get top answer of: {} -> {} is done ,add: {}", entity.getId(), entity.getName(), count);

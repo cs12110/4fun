@@ -20,13 +20,21 @@ import java.util.Map;
 public interface TopicMapper extends BaseMapper<TopicEntity> {
 
     /**
+     * 保存记录
+     *
+     * @param topic topic
+     * @return int
+     */
+    int save(@Param("obj") TopicEntity topic);
+
+    /**
      * 分页查询
      *
      * @param page      分页参数
      * @param columnMap 查询条件
      * @return List
      */
-    List<TopicEntity> selectByMap(Page page, @Param("cm") Map<String, Object> columnMap);
+    List<TopicEntity> selectByMap(Page page, @Param("obj") Map<String, Object> columnMap);
 
     /**
      * 获取顶级的话题

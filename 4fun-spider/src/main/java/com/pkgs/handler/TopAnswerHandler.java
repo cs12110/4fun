@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pkgs.entity.AnswerEntity;
-import com.pkgs.util.DateUtil;
 import com.pkgs.util.SysUtil;
 
 /**
@@ -79,7 +78,7 @@ public class TopAnswerHandler extends AbstractHandler<List<AnswerEntity>> {
 
 			String link = SysUtil.getAnswerLink(answer.getQuestionId(), answer.getAnswerId());
 			answer.setLink(link);
-			answer.setStealAt(DateUtil.getTime());
+			answer.setStealAt(SysUtil.getTime());
 
 			return answer;
 		} catch (Exception e) {
