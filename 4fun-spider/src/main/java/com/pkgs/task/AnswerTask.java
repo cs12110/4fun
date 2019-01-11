@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.pkgs.service.AnswerService;
 import com.pkgs.service.TopicService;
+import net.sf.jsqlparser.statement.create.view.TemporaryOption;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,11 +86,9 @@ public class AnswerTask implements Runnable {
 
     private List<TopicEntity> getRemainTopics() {
         // 获取需要爬取的话题
-        TopicEntity search = new TopicEntity();
-        search.setDone(0);
+        List<TopicEntity> list = topicService.queryRemainTopic();
 
-        return topicService
-                .query(search)
+        return list
                 .stream()
                 .filter(e -> null != e.getLink() && !"".equals(e.getLink().trim()))
                 .collect(Collectors.toList());

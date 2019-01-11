@@ -88,7 +88,7 @@
         ORDER BY upvote_num DESC
     </select>
 
-    <select id="selectCount" parameterType="com.pkgs.entity.AnswerEntity">
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.AnswerEntity">
         SELECT
         COUNT(*)
         FROM

@@ -25,7 +25,24 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @param topic topic
      * @return int
      */
-    int save(@Param("obj") TopicEntity topic);
+    int save(TopicEntity topic);
+
+    /**
+     * 更新update状态
+     *
+     * @param topicId topicId
+     * @param status  status
+     * @return int
+     */
+    int updateDoneStatus(@Param("topicId") Integer topicId, @Param("status") Integer status);
+
+    /**
+     * 统计符合条件的数据
+     *
+     * @param topic 查询条件
+     * @return int
+     */
+    int selectCount(@Param("obj") TopicEntity topic);
 
     /**
      * 分页查询
@@ -35,6 +52,7 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @return List
      */
     List<TopicEntity> selectByMap(Page page, @Param("obj") Map<String, Object> columnMap);
+
 
     /**
      * 获取顶级的话题

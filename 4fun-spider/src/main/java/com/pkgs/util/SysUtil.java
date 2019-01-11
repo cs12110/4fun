@@ -66,7 +66,7 @@ public class SysUtil {
      *
      * @param seconds 秒数
      */
-    public static void jsutStandingHere(int seconds) {
+    public static void justStandingHere(int seconds) {
         try {
             Thread.sleep(seconds * 1000);
         } catch (Exception e) {

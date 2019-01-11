@@ -27,17 +27,15 @@ public class TopicTask implements Runnable {
 
     @Override
     public void run() {
+        int oneHourSeconds = 3600;
         while (true) {
             logger.info("start working at get topic from zhihu");
             long start = System.currentTimeMillis();
             execute();
             long end = System.currentTimeMillis();
             logger.info("get topic is done,spend:{}", (end - start));
-            try {
-                Thread.sleep(1000 * 3600 * 12);
-            } catch (Exception e) {
-                //do nothing
-            }
+
+            SysUtil.justStandingHere(oneHourSeconds);
         }
     }
 
@@ -56,9 +54,7 @@ public class TopicTask implements Runnable {
     private void getAllTopTopic() {
         // 1. 首先查询出来所有的父级话题
         AbstractHandler<List<TopicEntity>> topHandler = new TopTopicHandler();
-        topHandler.get(SysUtil.TOPIC_URL).forEach(e -> {
-            topicService.saveIfNotExists(e);
-        });
+        topHandler.get(SysUtil.TOPIC_URL).forEach(topicService::saveIfNotExists);
     }
 
     /**
@@ -86,7 +82,7 @@ public class TopicTask implements Runnable {
                             .orElse(Collections.emptyList())
                             .forEach(topicService::saveIfNotExists);
 
-                    Thread.sleep(1000 * 60 * 5);
+                    SysUtil.justStandingHere(60000);
                 }
             } catch (Exception ex) {
                 logger.error("{}", ex);

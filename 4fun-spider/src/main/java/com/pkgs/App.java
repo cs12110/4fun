@@ -1,11 +1,6 @@
 package com.pkgs;
 
-import com.pkgs.entity.TopicEntity;
-import com.pkgs.mapper.TopicMapper;
-import com.pkgs.util.SqlSessionUtil;
-import org.apache.ibatis.session.SqlSession;
-
-import java.util.List;
+import com.pkgs.task.TopicTask;
 
 /**
  * App
@@ -15,14 +10,8 @@ import java.util.List;
 public class App {
 
     public static void main(String[] args) {
-        SqlSession session = SqlSessionUtil.openSession();
-        TopicMapper mapper = session.getMapper(TopicMapper.class);
-
-        List<TopicEntity> topicEntities = mapper.queryTopTopics();
-        topicEntities.forEach(System.out::println);
-
-        session.close();
+        new Thread(new TopicTask()).start();
     }
-    
+
 
 }

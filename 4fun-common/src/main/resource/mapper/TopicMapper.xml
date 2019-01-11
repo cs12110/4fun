@@ -25,22 +25,39 @@
         `done`
     </sql>
 
+    <update id="updateDoneStatus" parameterType="java.lang.Integer">
+        UPDATE
+        topic_t
+        SET
+        done = #{status}
+        WHERE
+        <choose>
+            <when test="topicId != null">
+                id = #{topicId}
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+
+    </update>
+
     <sql id="search">
         <where>
             <if test="obj.id!=null and obj.id!=''">
-                AND `id` LIKE concat('%',#{obj.id},'%')
+                AND `id` = #{obj.id}
             </if>
             <if test="obj.parentId!=null and obj.parentId!=''">
-                AND `parent_id` LIKE concat('%',#{obj.parentId},'%')
+                AND `parent_id` = #{obj.parentId}
             </if>
             <if test="obj.dataId!=null and obj.dataId!=''">
-                AND `data_id` LIKE concat('%',#{obj.dataId},'%')
+                AND `data_id` = #{obj.dataId}
             </if>
             <if test="obj.name!=null and obj.name!=''">
-                AND `name` LIKE concat('%',#{obj.name},'%')
+                AND `name`= #{obj.name}
             </if>
             <if test="obj.link!=null and obj.link!=''">
-                AND `link` LIKE concat('%',#{obj.link},'%')
+                AND `link` = #{obj.link}
             </if>
             <if test="obj.desc!=null and obj.desc!=''">
                 AND `desc` LIKE concat('%',#{obj.desc},'%')
@@ -49,39 +66,37 @@
                 AND `update_time` LIKE concat('%',#{obj.updateTime},'%')
             </if>
             <if test="obj.done!=null and obj.done!=''">
-                AND `done` LIKE concat('%',#{obj.done},'%')
+                AND `done` = #{obj.done}
             </if>
         </where>
     </sql>
 
     <insert id="save" parameterType="com.pkgs.entity.TopicEntity">
         INSERT INTO topic_t(
-            `id` ,
-            `parent_id` ,
-            `data_id` ,
-            `name` ,
-            `link` ,
-            `desc` ,
-            `update_time` ,
-            `done`
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
         ) VALUES(
-            #{id},
-            #{parentId},
-            #{dataId},
-            #{name},
-            #{link},
-            #{desc},
-            #{updateTime},
-            #{done}
+        #{parentId},
+        #{dataId},
+        #{name},
+        #{link},
+        #{desc},
+        #{updateTime},
+        #{done}
         )
     </insert>
 
-    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+    <select id="selectByMap" resultMap="resultMap">
         SELECT
         <include refid="fields"/>
         FROM
         topic_t
-        WHERE
+        <include refid="search"/>
     </select>
 
     <select id="queryTopTopics" resultMap="resultMap">
@@ -102,5 +117,13 @@
         WHERE
         topic_t.parent_id = #{parent_id}
         AND topic_id IS NOT NULL
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.TopicEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        topic_t
+        <include refid="search"/>
     </select>
 </mapper>

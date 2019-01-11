@@ -25,7 +25,10 @@ public class TopTopicHandlerTest {
             System.out.println(t);
         }
 
-        service.save(list);
+        for (TopicEntity e : list) {
+            service.saveIfNotExists(e);
 
+
+        }
     }
 }
