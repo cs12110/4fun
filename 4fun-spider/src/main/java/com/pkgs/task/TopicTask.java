@@ -82,7 +82,7 @@ public class TopicTask implements Runnable {
                             .orElse(Collections.emptyList())
                             .forEach(topicService::saveIfNotExists);
 
-                    SysUtil.justStandingHere(60000);
+                    SysUtil.justStandingHere(60 * 5);
                 }
             } catch (Exception ex) {
                 logger.error("{}", ex);
