@@ -1,6 +1,7 @@
 package com.pkgs;
 
 import com.pkgs.task.AnswerTask;
+import com.pkgs.task.ResetStatusTask;
 import com.pkgs.task.TopicTask;
 import com.pkgs.util.SysUtil;
 
@@ -12,9 +13,12 @@ import com.pkgs.util.SysUtil;
 public class App {
 
     public static void main(String[] args) {
+
+        new Thread(new ResetStatusTask()).start();
+
         new Thread(new TopicTask()).start();
 
-        SysUtil.justStandingHere(10);
+        SysUtil.justStandingHere(60 * 30);
 
         new Thread(new AnswerTask()).start();
     }

@@ -45,8 +45,8 @@ public class AnswerTask implements Runnable {
             long start = System.currentTimeMillis();
 
             execute();
-            // 重新设置爬取
-            topicService.updateDoneStatus(null, 0);
+
+            // topicService.updateDoneStatus(null, 0);
 
             long end = System.currentTimeMillis();
             logger.info("get top answer is done,spend:{}", (end - start));
