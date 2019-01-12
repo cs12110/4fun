@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.mapper.TopicMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.entity.TopicEntity">
+        <result column="id" property="id"/>
+        <result column="parent_id" property="parentId"/>
+        <result column="data_id" property="dataId"/>
+        <result column="name" property="name"/>
+        <result column="link" property="link"/>
+        <result column="desc" property="desc"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="done" property="done"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id` ,
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
+    </sql>
+
+    <update id="updateDoneStatus" parameterType="java.lang.Integer">
+        UPDATE
+        topic_t
+        SET
+        done = #{status}
+        WHERE
+        <choose>
+            <when test="topicId != null">
+                id = #{topicId}
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+
+    </update>
+
+    <sql id="search">
+        <where>
+            <if test="obj.id!=null and obj.id!=''">
+                AND `id` = #{obj.id}
+            </if>
+            <if test="obj.parentId!=null and obj.parentId!=''">
+                AND `parent_id` = #{obj.parentId}
+            </if>
+            <if test="obj.dataId!=null and obj.dataId!=''">
+                AND `data_id` = #{obj.dataId}
+            </if>
+            <if test="obj.name!=null and obj.name!=''">
+                AND `name`= #{obj.name}
+            </if>
+            <if test="obj.link!=null and obj.link!=''">
+                AND `link` = #{obj.link}
+            </if>
+            <if test="obj.desc!=null and obj.desc!=''">
+                AND `desc` LIKE concat('%',#{obj.desc},'%')
+            </if>
+            <if test="obj.updateTime!=null and obj.updateTime!=''">
+                AND `update_time` LIKE concat('%',#{obj.updateTime},'%')
+            </if>
+            <if test="obj.done!=null and obj.done!=''">
+                AND `done` = #{obj.done}
+            </if>
+        </where>
+    </sql>
+
+    <insert id="save" parameterType="com.pkgs.entity.TopicEntity"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO topic_t(
+        `parent_id` ,
+        `data_id` ,
+        `name` ,
+        `link` ,
+        `desc` ,
+        `update_time` ,
+        `done`
+        ) VALUES(
+        #{parentId},
+        #{dataId},
+        #{name},
+        #{link},
+        #{desc},
+        #{updateTime},
+        #{done}
+        )
+    </insert>
+
+    <select id="selectByMap" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        <include refid="search"/>
+    </select>
+
+    <select id="queryTopTopics" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+        parent_id IS NULL
+    </select>
+
+    <select id="queryTopics" resultMap="resultMap">
+        SELECT DISTINCT
+        topic_t.*
+        FROM
+        topic_t
+        LEFT JOIN top_answer_t ON top_answer_t.topic_id = topic_t.id
+        WHERE
+        topic_t.parent_id = #{parent_id}
+        AND topic_id IS NOT NULL
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.TopicEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        topic_t
+        <include refid="search"/>
+    </select>
+</mapper>

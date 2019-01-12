@@ -1,20 +1,27 @@
 package com.pkgs;
 
 import com.pkgs.task.AnswerTask;
+import com.pkgs.task.ResetStatusTask;
 import com.pkgs.task.TopicTask;
+import com.pkgs.util.SysUtil;
 
 /**
  * App
  *
- * 
  * @author cs12110 at 2018年12月10日下午9:38:34
- *
  */
 public class App {
 
-	public static void main(String[] args) {
-		new Thread(new TopicTask()).start();
-		new Thread(new AnswerTask()).start();
-	}
+    public static void main(String[] args) {
+
+        new Thread(new ResetStatusTask()).start();
+
+        new Thread(new TopicTask()).start();
+
+        SysUtil.justStandingHere(60 * 30);
+
+        new Thread(new AnswerTask()).start();
+    }
+
 
 }

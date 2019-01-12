@@ -20,10 +20,8 @@
         </encoder>
     </appender>
 
-    <logger name="com.pkgs.service.TopicService" level="INFO"/>
-    <logger name="com.pkgs.service.ProcessService" level="INFO"/>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
         <appender-ref ref="FILE"/>
     </root>

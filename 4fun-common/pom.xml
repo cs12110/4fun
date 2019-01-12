@@ -12,5 +12,25 @@
     <artifactId>4fun-common</artifactId>
     <version>1.0.0</version>
 
+    <dependencies>
+        <!-- mybatis plus -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus</artifactId>
+            <version>3.0.7.1</version>
+        </dependency>
+    </dependencies>
 
+    <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.xml</include>
+                </includes>
+                <filtering>false</filtering><!--这里是false，用true会报 数据库连接 错误-->
+            </resource>
+        </resources>
+    </build>
 </project>

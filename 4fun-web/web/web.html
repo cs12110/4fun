@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>知乎</title>
+
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="css/element-index.css" />
+    <style>
+        .head-div,.main-div {
+            width: 80%;
+            margin-left: 10%;
+            margin-right: 10%;
+        }
+        .search-div,.el-pagination {
+            float: right;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <el-header class="head-div">
+            <div class="search-div">
+                <el-select v-model="firstTopicValue" placeholder="请选择" @change="updateSecondTopicOptions">
+                    <el-option v-for="item in firstTopicOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+
+                <el-select v-model="secondTopicValue" placeholder="请选择" @change="search">
+                    <el-option v-for="item in secondTopicOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+            </div>
+        </el-header>
+        <el-main class="main-div">
+            <template>
+                <el-table :data="list">
+                    <el-table-column prop="author" label="作者"></el-table-column>
+                    <el-table-column prop="question" label="问题"></el-table-column>
+                    <!-- <el-table-column prop="summary" label="简介"></el-table-column> -->
+                    <el-table-column prop="upvoteNum" label="点赞数"></el-table-column>
+                    <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button @click="display(scope.row)" type="text" size="small">
+                                简介
+                            </el-button>
+                            <el-button @click="jumpToZhihu(scope.row)" type="text" size="small">
+                                详情
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+            <div class='page-div'>
+                <el-pagination background layout="prev, pager, next" :total="page.total" :page-size="page.size"
+                    @current-change="handleCurrentChange"></el-pagination>
+            </div>
+        </el-main>
+    </div>
+</body>
+<!-- 引入组件库 -->
+<script src="js/vue.js"></script>
+<script src="js/element-index.js"></script>
+<script>
+    const server = "http://127.0.0.1:8081";
+
+    var vm = new Vue({
+        el: "#app",
+        data: {
+            list: [],
+            page: {
+                size: 5,
+                total: 0,
+                current: 0,
+            },
+            firstTopicValue: null,
+            firstTopicOptions: [],
+            secondTopicValue: null,
+            secondTopicOptions: [],
+        },
+        created: function () {
+            this.updateFirstTopicOptions();
+            this.fetchUp();
+        },
+        mounted: function () {},
+        methods: {
+            fetchUp: function () {
+                var url = server + "/rest/answers";
+                let formData = new FormData();
+                formData.append("pageSize", this.page.size);
+                formData.append("pageIndex", this.page.current);
+                if (null != this.secondTopicValue) {
+                    formData.append("topicId", this.secondTopicValue);
+                }
+
+                fetch(url, {
+                        method: "POST",
+                        headers: {},
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(json => {
+                        vm.page = json.page;
+                        vm.list = json.list;
+                    });
+            },
+            jumpToZhihu: function (row) {
+                window.open(row.link, "_blank");
+            },
+            display: function (row) {
+                // this.$message(row.summary);
+                this.$alert(row.summary, row.question, {
+                    confirmButtonText: '确定',
+                    callback: action => {}
+                });
+            },
+            search: function () {
+                this.page.current = 0;
+                this.fetchUp();
+            },
+            updateFirstTopicOptions: function () {
+                var url = server + "/rest/topTopics";
+                fetch(url)
+                    .then(response => response.json())
+                    .then(json => {
+                        vm.firstTopicOptions = vm.parse2OptionArr(json);
+                    });
+            },
+            updateSecondTopicOptions: function () {
+                vm.secondTopicValue = null;
+                var url = server + "/rest/topics?parentId=" + vm.firstTopicValue;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(json => {
+                        vm.secondTopicOptions = vm.parse2OptionArr(json);
+                    });
+            },
+            parse2OptionArr: function (topicList) {
+                var optionArr = new Array();
+                for (var i in topicList) {
+                    var each = topicList[i];
+                    var item = {
+                        "label": each.name,
+                        "value": each.id
+                    };
+                    optionArr.push(item);
+                }
+                return optionArr;
+            },
+            handleCurrentChange: function (value) {
+                this.page.current = value;
+                this.fetchUp();
+            }
+        },
+
+    });
+</script>
+
+</html>
