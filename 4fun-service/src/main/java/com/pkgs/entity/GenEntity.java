@@ -8,4 +8,7 @@ package com.pkgs.entity;
  */
 public class GenEntity {
 
+//    public static void say() {
+//
+//    }
 }
