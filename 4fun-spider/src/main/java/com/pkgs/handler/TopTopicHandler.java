@@ -35,6 +35,8 @@ public class TopTopicHandler extends AbstractHandler<List<TopicEntity>> {
                 topic.setDataId(dataId);
                 topic.setName(name);
                 topic.setUpdateTime(SysUtil.getTime());
+                //设置为已经爬取
+                topic.setDone(1);
                 list.add(topic);
             }
         } catch (Exception e) {

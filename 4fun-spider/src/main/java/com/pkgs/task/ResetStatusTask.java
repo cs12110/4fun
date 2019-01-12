@@ -1,9 +1,12 @@
 package com.pkgs.task;
 
+import com.pkgs.entity.TopicEntity;
 import com.pkgs.service.TopicService;
 import com.pkgs.util.SysUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /**
  * <p/>
@@ -19,11 +22,15 @@ public class ResetStatusTask implements Runnable {
 
     @Override
     public void run() {
-        int allDayLongSeconds = 60 * 60 * 24;
+        int oneMinuteSeconds = 60;
         while (true) {
-            logger.info("Reset all status to 0");
-            topicService.updateDoneStatus(null, 0);
-            SysUtil.justStandingHere(allDayLongSeconds);
+            // 获取尚未爬取的话题
+            List<TopicEntity> list = topicService.queryRemainTopic();
+            if (null != list && list.size() == 0) {
+                logger.info("Reset all status to 0");
+                topicService.updateDoneStatus(null, 0);
+            }
+            SysUtil.justStandingHere(oneMinuteSeconds);
         }
     }
 }

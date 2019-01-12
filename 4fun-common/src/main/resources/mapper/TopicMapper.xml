@@ -36,7 +36,7 @@
                 id = #{topicId}
             </when>
             <otherwise>
-                1=1
+                parent_id IS NOT NULL
             </otherwise>
         </choose>
 

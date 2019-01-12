@@ -3,7 +3,6 @@ package com.pkgs;
 import com.pkgs.task.AnswerTask;
 import com.pkgs.task.ResetStatusTask;
 import com.pkgs.task.TopicTask;
-import com.pkgs.util.SysUtil;
 
 /**
  * App
@@ -14,14 +13,14 @@ public class App {
 
     public static void main(String[] args) {
 
+        // 启动重设爬话题取状态任务
         new Thread(new ResetStatusTask()).start();
 
+        // 启动爬取话题任务
         new Thread(new TopicTask()).start();
 
-        SysUtil.justStandingHere(60 * 30);
-
+        // 启动爬取话题下面精华回答任务
         new Thread(new AnswerTask()).start();
     }
-
 
 }
