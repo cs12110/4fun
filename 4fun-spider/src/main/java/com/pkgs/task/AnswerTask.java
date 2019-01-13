@@ -51,7 +51,6 @@ public class AnswerTask implements Runnable {
             long end = System.currentTimeMillis();
             logger.info("get top answer is done,spend:{}", (end - start));
 
-            // 休息5分钟
             SysUtil.justStandingHere(60);
         }
     }
