@@ -42,7 +42,7 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @param topic 查询条件
      * @return int
      */
-    int selectCount(@Param("obj") TopicEntity topic);
+    int selectCount(@Param("cm") TopicEntity topic);
 
     /**
      * 分页查询
@@ -51,7 +51,7 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @param columnMap 查询条件
      * @return List
      */
-    List<TopicEntity> selectByMap(Page<TopicEntity> page, @Param("obj") Map<String, Object> columnMap);
+    List<TopicEntity> selectByMap(Page<TopicEntity> page, @Param("cm") Map<String, Object> columnMap);
 
 
     /**

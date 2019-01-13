@@ -25,6 +25,36 @@
         `done`
     </sql>
 
+
+    <sql id="search">
+        <where>
+            <if test="cm.id!=null and cm.id!=''">
+                AND `id` = #{cm.id}
+            </if>
+            <if test="cm.parentId!=null and cm.parentId!=''">
+                AND `parent_id` = #{cm.parentId}
+            </if>
+            <if test="cm.dataId!=null and cm.dataId!=''">
+                AND `data_id` = #{cm.dataId}
+            </if>
+            <if test="cm.name!=null and cm.name!=''">
+                AND `name`= #{cm.name}
+            </if>
+            <if test="cm.link!=null and cm.link!=''">
+                AND `link` = #{cm.link}
+            </if>
+            <if test="cm.desc!=null and cm.desc!=''">
+                AND `desc` LIKE concat('%',#{cm.desc},'%')
+            </if>
+            <if test="cm.updateTime!=null and cm.updateTime!=''">
+                AND `update_time` LIKE concat('%',#{cm.updateTime},'%')
+            </if>
+            <if test="cm.done!=null">
+                AND `done` = #{cm.done}
+            </if>
+        </where>
+    </sql>
+
     <update id="updateDoneStatus" parameterType="java.lang.Integer">
         UPDATE
         topic_t
@@ -42,36 +72,8 @@
 
     </update>
 
-    <sql id="search">
-        <where>
-            <if test="obj.id!=null and obj.id!=''">
-                AND `id` = #{obj.id}
-            </if>
-            <if test="obj.parentId!=null and obj.parentId!=''">
-                AND `parent_id` = #{obj.parentId}
-            </if>
-            <if test="obj.dataId!=null and obj.dataId!=''">
-                AND `data_id` = #{obj.dataId}
-            </if>
-            <if test="obj.name!=null and obj.name!=''">
-                AND `name`= #{obj.name}
-            </if>
-            <if test="obj.link!=null and obj.link!=''">
-                AND `link` = #{obj.link}
-            </if>
-            <if test="obj.desc!=null and obj.desc!=''">
-                AND `desc` LIKE concat('%',#{obj.desc},'%')
-            </if>
-            <if test="obj.updateTime!=null and obj.updateTime!=''">
-                AND `update_time` LIKE concat('%',#{obj.updateTime},'%')
-            </if>
-            <if test="obj.done!=null and obj.done!=''">
-                AND `done` = #{obj.done}
-            </if>
-        </where>
-    </sql>
 
-    <insert id="save" parameterType="com.pkgs.entity.TopicEntity"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="com.pkgs.entity.TopicEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO topic_t(
         `parent_id` ,
         `data_id` ,
