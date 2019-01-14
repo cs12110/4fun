@@ -46,8 +46,6 @@ public class AnswerTask implements Runnable {
 
             execute();
 
-            // topicService.updateDoneStatus(null, 0);
-
             long end = System.currentTimeMillis();
             logger.info("get top answer is done,spend:{}", (end - start));
 

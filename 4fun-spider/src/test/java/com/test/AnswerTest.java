@@ -2,14 +2,15 @@ package com.test;
 
 import org.junit.Test;
 
-import com.pkgs.task.AnswerTask;
-
 public class AnswerTest {
 
-	@Test
-	public void test() {
-		AnswerTask task = new AnswerTask();
-		task.run();
-	}
+    @Test
+    public void test() {
+//		AnswerMapper wrapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
+//
+//		Integer integer = wrapper.selectIdByLink("https://www.zhihu.com/question/31476726/answer/52484181");
+//
+//		System.out.println(integer);
+    }
 
 }

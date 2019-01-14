@@ -8,6 +8,8 @@ import com.pkgs.util.ProxyMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 /**
  * <p/>
  *
@@ -21,12 +23,18 @@ public class AnswerService {
     private Logger logger = LoggerFactory.getLogger(AnswerService.class);
 
     /**
+     * lock
+     */
+    private static ReentrantLock lock = new ReentrantLock();
+
+    /**
      * 保存数据
      *
      * @param entity entity
      * @return boolean
      */
     public boolean saveIfNotExists(AnswerEntity entity) {
+        lock.lock();
         try {
             AnswerMapper mapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
             Integer answerId = mapper.selectIdByLink(entity.getLink());
@@ -42,6 +50,8 @@ public class AnswerService {
             mappingTopicAnswer(entity.getTopicId(), answerId);
         } catch (Exception e) {
             logger.error("{}", e);
+        } finally {
+            lock.unlock();
         }
         return true;
     }
