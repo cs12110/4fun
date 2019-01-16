@@ -20,6 +20,7 @@
         <mapper resource="mapper/TopicMapper.xml"/>
         <mapper resource="mapper/AnswerMapper.xml"/>
         <mapper resource="mapper/MapTopicAnswerMapper.xml"/>
+        <mapper resource="mapper/SentenceMapper.xml"/>
     </mappers>
 
 </configuration>

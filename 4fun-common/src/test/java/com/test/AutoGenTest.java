@@ -26,4 +26,11 @@ public class AutoGenTest {
         String mapper = AutoGenUtil.genMapperInterface(SentenceEntity.class);
         System.out.println(mapper);
     }
+
+
+    @Test
+    public void testSql() {
+        String sql = AutoGenUtil.genSql(SentenceEntity.class);
+        System.out.println(sql);
+    }
 }

@@ -45,7 +45,7 @@
             <include refid="fields"/>
         FROM
             ${tableName}
-        WHERE
+        <include refid="search"/>
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="${entityName}">

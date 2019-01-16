@@ -1,27 +1,23 @@
 package com.pkgs.util;
 
-import java.io.File;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
-
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * TODO: 代码生成器
  * <p>
- * Author: cs12110 create at: 2019/1/6 20:44 Since: 1.0.0
+ *
+ * @author cs12110 create at: 2019/1/6 20:44 Since: 1.0.0
  */
 public class AutoGenUtil {
 
@@ -102,16 +98,16 @@ public class AutoGenUtil {
      */
     private static Function<Class<?>, String> typeTranslateFun = (type) -> {
         if (type == int.class || type == Integer.class) {
-            return "int";
+            return "int(18)";
         }
         if (type == float.class || type == Float.class) {
-            return "float";
+            return "float(18)";
         }
         if (type == double.class || type == Double.class) {
-            return "double";
+            return "double(18)";
         }
 
-        return "varchar";
+        return "varchar(256)";
     };
 
     /**
@@ -125,48 +121,18 @@ public class AutoGenUtil {
         engine.init();
     }
 
-    /**
-     * 将生产的代码存放到硬盘去
-     *
-     * @param entityClass 实体类对象
-     * @param path        磁盘路径
-     */
-    public static void genCode(Class<?> entityClass, String path) {
-        File file = new File(path);
-        if (!file.exists()) {
-            file.mkdirs();
-        }
 
-        // String mapperXml = genMapperXml(entityClass);
-        // String mapperInterface = genMapperInterface(entityClass);
+    public static String genSql(Class<?> entityClass) {
+        String tableName = toTableNameFunction.apply(entityClass.getSimpleName());
+        List<Map<String, String>> list = getFieldMapList(entityClass);
+
+        VelocityContext ctx = new VelocityContext();
+        ctx.put("tableName", tableName);
+        ctx.put("fields", list);
+
+        String path = "code/SQL.vm";
+        return genCode(ctx, path);
     }
-
-    // /**
-    // * 保存数据到文件
-    // *
-    // * @param path
-    // * 文件路径
-    // * @param code
-    // * 数据
-    // */
-    // private static void save2Disk(String path, String code) {
-    // FileOutputStream out = null;
-    // try {
-    // out = new FileOutputStream(new File(path));
-    // out.write(code.getBytes());
-    // out.flush();
-    // } catch (Exception e) {
-    // e.printStackTrace();
-    // } finally {
-    // try {
-    // if (null != out) {
-    // out.close();
-    // }
-    // } catch (Exception e) {
-    // //do nothing
-    // }
-    // }
-    // }
 
     /**
      * 生成Mapper xml
@@ -179,23 +145,7 @@ public class AutoGenUtil {
         String mapperName = toMapperInterfaceNameFunction.apply(entityClass.getSimpleName());
         String tableName = toTableNameFunction.apply(entityClass.getSimpleName());
 
-        List<Map<String, String>> list = new ArrayList<>();
-        try {
-            while (entityClass != Object.class) {
-                Field[] fieldArr = entityClass.getDeclaredFields();
-                for (Field f : fieldArr) {
-                    Map<String, String> map = new HashMap<>(3);
-                    String fieldName = f.getName();
-                    map.put("fieldName", fieldName);
-                    map.put("columnName", toSqlColumnNameFunction.apply(fieldName));
-                    map.put("type", typeTranslateFun.apply(f.getType()));
-                    list.add(map);
-                }
-                entityClass = entityClass.getSuperclass();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        List<Map<String, String>> list = getFieldMapList(entityClass);
 
         VelocityContext ctx = new VelocityContext();
         ctx.put("tableName", tableName);
@@ -205,6 +155,28 @@ public class AutoGenUtil {
 
         String path = "code/MapperXML.vm";
         return genCode(ctx, path);
+    }
+
+
+    private static List<Map<String, String>> getFieldMapList(Class<?> entityClass) {
+        List<Map<String, String>> list = new ArrayList<>();
+        try {
+            while (entityClass != Object.class) {
+                Field[] fieldArr = entityClass.getDeclaredFields();
+                for (Field f : fieldArr) {
+                    Map<String, String> map = new HashMap<>(3);
+                    String fieldName = f.getName();
+                    map.put("fieldName", fieldName);
+                    map.put("columnName", toSqlColumnNameFunction.apply(fieldName));
+                    map.put("typeName", typeTranslateFun.apply(f.getType()));
+                    list.add(map);
+                }
+                entityClass = entityClass.getSuperclass();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
     }
 
     /**

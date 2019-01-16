@@ -6,8 +6,13 @@ DROP TABLE IF EXISTS ${tableName};
 
 -- create table
 
-CREATE TABLE ${tableName}{
+CREATE TABLE ${tableName}(
     #foreach ($f in $fields)
-        ${f.column} ${f.type}  #if($foreach.hasNext),#end
+        #if($f.columnName=='id')
+        `${f.columnName}` ${f.typeName}  PRIMARY key auto_increment #if($foreach.hasNext),#end
+        #else
+        `${f.columnName}` ${f.typeName}  #if($foreach.hasNext),#end
+        #end
+
     #end
-}ENGINE=INNODB charset='utf8' comment '${tableName}';
+)ENGINE=INNODB charset='utf8' auto_increment=1 comment '${tableName}';

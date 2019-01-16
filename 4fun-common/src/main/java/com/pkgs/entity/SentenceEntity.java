@@ -30,7 +30,7 @@ public class SentenceEntity {
     /**
      * 序号
      */
-    private Integer order;
+    private Integer idx;
 
     /**
      * 壁纸
@@ -61,12 +61,12 @@ public class SentenceEntity {
         this.sentence = sentence;
     }
 
-    public Integer getOrder() {
-        return order;
+    public Integer getIdx() {
+        return idx;
     }
 
-    public void setOrder(Integer order) {
-        this.order = order;
+    public void setIdx(Integer idx) {
+        this.idx = idx;
     }
 
     public String getWallpaper() {
