@@ -3,7 +3,7 @@
 <mapper namespace="com.pkgs.mapper.AnswerMapper">
 
     <resultMap id="resultMap" type="com.pkgs.entity.AnswerEntity">
-        <id column="id" property="id" jdbcType="INTEGER"/>
+        <id column="id" property="id"/>
         <result column="question" property="question"/>
         <result column="question_id" property="questionId"/>
         <result column="answer_id" property="answerId"/>
@@ -34,10 +34,10 @@
 
     <sql id="search">
         <where>
-            <if test="cm.id != null and cm.id != ''">
+            <if test="cm.id != null">
                 AND `id` LIKE concat('%',#{cm.id},'%')
             </if>
-               <if test="cm.question != null and cm.question != ''">
+            <if test="cm.question != null and cm.question != ''">
                 AND `question` LIKE concat('%',#{cm.question},'%')
             </if>
             <if test="cm.questionId != null and cm.questionId != ''">
@@ -73,31 +73,31 @@
         </where>
     </sql>
 
-    <insert id="save" parameterType="com.pkgs.entity.AnswerEntity"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="com.pkgs.entity.AnswerEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO top_answer_t(
-            `question` ,
-            `question_id` ,
-            `answer_id` ,
-            `author` ,
-            `link` ,
-            `upvote_num` ,
-            `comment_num` ,
-            `summary` ,
-            `create_at` ,
-            `update_at` ,
-            `steal_at`
+        `question` ,
+        `question_id` ,
+        `answer_id` ,
+        `author` ,
+        `link` ,
+        `upvote_num` ,
+        `comment_num` ,
+        `summary` ,
+        `create_at` ,
+        `update_at` ,
+        `steal_at`
         ) VALUES(
-            #{question},
-            #{questionId},
-            #{answerId},
-            #{author},
-            #{link},
-            #{upvoteNum},
-            #{commentNum},
-            #{summary},
-            #{createAt},
-            #{updateAt},
-            #{stealAt}
+        #{question},
+        #{questionId},
+        #{answerId},
+        #{author},
+        #{link},
+        #{upvoteNum},
+        #{commentNum},
+        #{summary},
+        #{createAt},
+        #{updateAt},
+        #{stealAt}
         )
     </insert>
 
@@ -105,12 +105,29 @@
         SELECT id FROM top_answer_t WHERE link = #{link}
     </select>
 
-    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map" >
+    <select id="selectByMap" resultMap="resultMap">
         SELECT
         <include refid="fields"/>
         FROM
         top_answer_t
         <include refid="search"/>
+        ORDER BY upvote_num DESC
+    </select>
+
+    <select id="selectByMap1" resultMap="resultMap">
+        SELECT
+        DISTINCT top_answer_t.*
+        FROM
+        top_answer_t
+        LEFT JOIN map_topic_answer_t ON map_topic_answer_t.answer_id = top_answer_t.id
+        WHERE
+        1=1
+        <if test="cm.topicIdList != null and cm.topicIdList.size > 0">
+            AND map_topic_answer_t.topic_id IN
+            <foreach collection="cm.topicIdList" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
         ORDER BY upvote_num DESC
     </select>
 

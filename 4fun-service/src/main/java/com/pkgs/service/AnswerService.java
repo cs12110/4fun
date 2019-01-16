@@ -3,6 +3,7 @@ package com.pkgs.service;
 import java.util.HashMap;
 import java.util.List;
 
+import com.pkgs.mapper.TopicMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ public class AnswerService {
     @Autowired
     private AnswerMapper answerMapper;
 
+    @Autowired
+    private TopicMapper topicMapper;
+
     public List<AnswerEntity> query(String topicId, Page<AnswerEntity> page) {
         //查询参数
         HashMap<String, Object> searchMap = new HashMap<>(1);
@@ -30,4 +34,22 @@ public class AnswerService {
 
         return answerMapper.selectByMap(page, searchMap);
     }
+
+
+    public List<AnswerEntity> queryWithTopic(String topicId, Page<AnswerEntity> page) {
+        List<Integer> topicIdList = null;
+        if (null != topicId) {
+            int itself = Integer.parseInt(topicId);
+            topicIdList = topicMapper.selectChildId(itself);
+            topicIdList.add(itself);
+        }
+
+        //查询参数
+        HashMap<String, Object> searchMap = new HashMap<>(1);
+        searchMap.put("topicIdList", topicIdList);
+
+        return answerMapper.selectByMap1(page, searchMap);
+    }
+
+
 }

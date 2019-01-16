@@ -52,4 +52,13 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      */
     List<AnswerEntity> selectByMap(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
 
+
+    /**
+     * 分页查询
+     *
+     * @param page      分页参数
+     * @param columnMap 查询条件
+     * @return List
+     */
+    List<AnswerEntity> selectByMap1(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
 }

@@ -43,9 +43,12 @@ public class RestCtrl {
     @ResponseBody
     @AntiResubmitAnno
     public String answers(String topicId, Integer pageIndex, Integer pageSize) {
+        if ("null".equals(topicId)) {
+            topicId = null;
+        }
 
         Page<AnswerEntity> page = new Page<>(pageIndex, pageSize);
-        List<AnswerEntity> list = answerService.query(topicId, page);
+        List<AnswerEntity> list = answerService.queryWithTopic(topicId, page);
 
         Map<String, Object> map = new HashMap<>(2);
         map.put("page", page);

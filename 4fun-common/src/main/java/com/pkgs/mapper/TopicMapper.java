@@ -68,4 +68,12 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @return List
      */
     List<TopicEntity> queryTopics(String parentId);
+
+    /**
+     * 根据父级id查询子级所有Id
+     *
+     * @param id id
+     * @return List
+     */
+    List<Integer> selectChildId(@Param("id") Integer id);
 }

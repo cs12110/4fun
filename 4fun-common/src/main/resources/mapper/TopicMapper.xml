@@ -111,14 +111,23 @@
     </select>
 
     <select id="queryTopics" resultMap="resultMap">
-        SELECT DISTINCT
-        topic_t.*
+        <!--SELECT DISTINCT-->
+        <!--topic_t.*-->
+        <!--FROM-->
+        <!--topic_t-->
+        <!--LEFT JOIN top_answer_t ON top_answer_t.topic_id = topic_t.id-->
+        <!--WHERE-->
+        <!--topic_t.parent_id = #{parent_id}-->
+        <!--AND topic_id IS NOT NULL-->
+
+        SELECT
+        DISTINCT topic_t.*
         FROM
         topic_t
-        LEFT JOIN top_answer_t ON top_answer_t.topic_id = topic_t.id
+        LEFT JOIN map_topic_answer_t ON topic_t.id = map_topic_answer_t.topic_id
         WHERE
         topic_t.parent_id = #{parent_id}
-        AND topic_id IS NOT NULL
+        AND map_topic_answer_t.answer_id IS NOT NULL
     </select>
 
     <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.TopicEntity">
@@ -127,5 +136,18 @@
         FROM
         topic_t
         <include refid="search"/>
+    </select>
+
+    <select id="selectChildId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        SELECT
+            id
+        FROM
+            topic_t
+        WHERE
+            1=1
+        <if test="id!=null">
+            AND parent_id = #{id}
+        </if>
+
     </select>
 </mapper>
