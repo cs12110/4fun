@@ -1,0 +1,13 @@
+
+-- drop table
+
+DROP TABLE IF EXISTS ${tableName};
+
+
+-- create table
+
+CREATE TABLE ${tableName}{
+    #foreach ($f in $fields)
+        ${f.column} ${f.type}  #if($foreach.hasNext),#end
+    #end
+}ENGINE=INNODB charset='utf8' comment '${tableName}';

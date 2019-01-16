@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.mapper.SentenceMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.entity.SentenceEntity">
+        <result column="id" property="id"/>
+        <result column="author" property="author"/>
+        <result column="sentence" property="sentence"/>
+        <result column="order" property="order"/>
+        <result column="wallpaper" property="wallpaper"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id` ,
+        `author` ,
+        `sentence` ,
+        `order` ,
+        `wallpaper`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.id != null and cm.id != ''">
+                AND `id` LIKE concat('%',#{cm.id},'%')
+            </if>
+            <if test="cm.author != null and cm.author != ''">
+                AND `author` LIKE concat('%',#{cm.author},'%')
+            </if>
+            <if test="cm.sentence != null and cm.sentence != ''">
+                AND `sentence` LIKE concat('%',#{cm.sentence},'%')
+            </if>
+            <if test="cm.order != null and cm.order != ''">
+                AND `order` LIKE concat('%',#{cm.order},'%')
+            </if>
+            <if test="cm.wallpaper != null and cm.wallpaper != ''">
+                AND `wallpaper` LIKE concat('%',#{cm.wallpaper},'%')
+            </if>
+        </where>
+    </sql>
+
+    <insert id="save" parameterType="com.pkgs.entity.SentenceEntity">
+        INSERT INTO sentence_t(
+        `id` ,
+        `author` ,
+        `sentence` ,
+        `order` ,
+        `wallpaper`
+        ) VALUES(
+        #{id},
+        #{author},
+        #{sentence},
+        #{order},
+        #{wallpaper}
+        )
+    </insert>
+
+    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        sentence_t
+        WHERE
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.SentenceEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        sentence_t
+        <include refid="search"/>
+    </select>
+</mapper>

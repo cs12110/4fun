@@ -2,22 +2,24 @@ package com.pkgs.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.AnswerEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 
 import java.util.List;
 import java.util.Map;
 
+import com.pkgs.entity.SentenceEntity;
+
 /**
- * TODO: MapperXML.vm for Answer
+ * TODO: Mapper for SentenceEntity
  * <p>
  *
- * @author cs12110 create at: 2019/1/6 19:51
+ * @author cs12110 create at: 2019-01-16 09:56:29
  * Since: 1.0.0
  */
 @Mapper
-public interface AnswerMapper extends BaseMapper<AnswerEntity> {
+public interface SentenceMapper extends BaseMapper<SentenceEntity> {
 
     /**
      * 新增
@@ -25,7 +27,7 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @param entity entity
      * @return int
      */
-    int save(AnswerEntity entity);
+    int save(SentenceEntity entity);
 
     /**
      * 统计符合条件的数据
@@ -33,15 +35,8 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @param search 查询条件
      * @return int
      */
-    int selectCount(@Param("cm") AnswerEntity search);
+    int selectCount(@Param("cm") SentenceEntity search);
 
-    /**
-     * 根据连接获取id
-     *
-     * @param link 连接
-     * @return Integer
-     */
-    Integer selectIdByLink(String link);
 
     /**
      * 分页查询
@@ -50,6 +45,5 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @param columnMap 查询条件
      * @return List
      */
-    List<AnswerEntity> selectByMap(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
-
+    List<SentenceEntity> selectByMap(Page<SentenceEntity> page, @Param("cm") Map<String, Object> columnMap);
 }
