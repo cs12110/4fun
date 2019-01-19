@@ -5,7 +5,7 @@
     <appender name="STDOUT"
               class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{16}:%L - %msg%n
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{100}:%L - %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -20,6 +20,7 @@
         </encoder>
     </appender>
 
+    <logger name="org.apache.ibatis" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="STDOUT"/>

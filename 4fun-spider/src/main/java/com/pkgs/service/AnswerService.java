@@ -1,6 +1,7 @@
 package com.pkgs.service;
 
 import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.MapTopicAnswerEntity;
 import com.pkgs.mapper.AnswerMapper;
 import com.pkgs.mapper.MapTopicAnswerMapper;
@@ -33,27 +34,30 @@ public class AnswerService {
      * @param entity entity
      * @return boolean
      */
-    public boolean saveIfNotExists(AnswerEntity entity) {
+    public ExecResult saveIfNotExists(AnswerEntity entity) {
         lock.lock();
+        ExecResult result = new ExecResult();
+        result.setSuccess(false);
         try {
             AnswerMapper mapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
             Integer answerId = mapper.selectIdByLink(entity.getLink());
 
-            if (answerId != null) {
-                logger.debug("exists:{}->{}", entity.getAuthor(), entity.getQuestion());
-            } else {
+            if (answerId == null) {
                 mapper.save(entity);
                 answerId = entity.getId();
-                logger.info("save:{}->{}", entity.getAuthor(), entity.getQuestion());
+                result.setSuccess(true);
+            } else {
+                result.setMsg("exists");
             }
             //处理关系
             mappingTopicAnswer(entity.getTopicId(), answerId);
         } catch (Exception e) {
             logger.error("{}", e);
+            result.setMsg("have an error");
         } finally {
             lock.unlock();
         }
-        return true;
+        return result;
     }
 
 
@@ -79,6 +83,4 @@ public class AnswerService {
             logger.error("{}", e);
         }
     }
-
-
 }

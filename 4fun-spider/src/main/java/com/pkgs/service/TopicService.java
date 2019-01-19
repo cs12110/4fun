@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.TopicEntity;
 import com.pkgs.mapper.TopicMapper;
 import com.pkgs.util.ProxyMapperUtil;
+import com.pkgs.util.SysUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,6 @@ public class TopicService {
      */
     public void updateDoneStatus(Integer topicId, int status) {
         TopicMapper mapper = ProxyMapperUtil.wrapper(TopicMapper.class);
-        mapper.updateDoneStatus(topicId, status);
+        mapper.updateDoneStatus(topicId, status, SysUtil.getTime());
     }
 }

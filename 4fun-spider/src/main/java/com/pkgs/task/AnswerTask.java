@@ -1,22 +1,25 @@
 package com.pkgs.task;
 
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.Collectors;
-
-import com.pkgs.service.AnswerService;
-import com.pkgs.service.TopicService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.alibaba.fastjson.JSON;
 import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.TopicEntity;
 import com.pkgs.handler.AbstractHandler;
 import com.pkgs.handler.TopAnswerHandler;
+import com.pkgs.service.AnswerService;
+import com.pkgs.service.TopicService;
 import com.pkgs.util.PropertiesUtil;
 import com.pkgs.util.SysUtil;
+import com.pkgs.util.ThreadFactoryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * 获取top answer
@@ -29,9 +32,23 @@ public class AnswerTask implements Runnable {
 
     private static TopicService topicService = new TopicService();
     private static AnswerService answerService = new AnswerService();
+    private static Random random = new Random();
 
     private static final int THREAD_NUM = 2;
-    private static ExecutorService pool = Executors.newFixedThreadPool(THREAD_NUM);
+    private static ExecutorService pool;
+
+    static {
+        int keepAliveTime = 0;
+        String prefixName = "spider";
+
+        pool = new ThreadPoolExecutor(
+                THREAD_NUM,
+                THREAD_NUM,
+                keepAliveTime,
+                TimeUnit.SECONDS,
+                new LinkedBlockingDeque<>(),
+                ThreadFactoryUtil.buildCustomerThreadFactory(prefixName));
+    }
 
     /**
      * 最小点赞数
@@ -40,7 +57,7 @@ public class AnswerTask implements Runnable {
 
     @Override
     public void run() {
-        for (; ; ) {
+        while (true) {
             logger.info("start working at get top answer");
             long start = System.currentTimeMillis();
 
@@ -68,13 +85,14 @@ public class AnswerTask implements Runnable {
             for (TopicEntity e : partList) {
                 pool.submit(new MySpider(e, countDownLatch));
             }
+
             try {
                 countDownLatch.await();
             } catch (Exception e) {
                 //do nothing
             }
 
-            int sleep = 5 + (int) (Math.random() * 5);
+            int sleep = 5 + random.nextInt(5);
             SysUtil.justStandingHere(sleep);
         }
     }
@@ -119,6 +137,7 @@ public class AnswerTask implements Runnable {
             int count = 0;
             boolean gt = true;
 
+            Map<String, Object> map = new HashMap<>(5);
             // 获取前200条数据
             for (int index = 0; index < page; index++) {
                 handler.setValue(entity.getId());
@@ -131,7 +150,17 @@ public class AnswerTask implements Runnable {
                         gt = false;
                         break;
                     }
-                    count += answerService.saveIfNotExists(a) ? 1 : 0;
+
+                    ExecResult result = answerService.saveIfNotExists(a);
+                    if (result.isSuccess()) {
+                        count += 1;
+                    }
+                    map.put("topicName", entity.getName());
+                    map.put("author", a.getAuthor());
+                    map.put("question", a.getQuestion());
+                    map.put("status", result.isSuccess());
+                    map.put("message", result.getMsg());
+                    logger.info(JSON.toJSONString(map, true));
                 }
                 if (!gt) {
                     break;

@@ -30,11 +30,14 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
     /**
      * 更新update状态
      *
-     * @param topicId topicId
-     * @param status  status
+     * @param topicId    topicId
+     * @param status     status
+     * @param updateTime 更新时间
      * @return int
      */
-    int updateDoneStatus(@Param("topicId") Integer topicId, @Param("status") Integer status);
+    int updateDoneStatus(@Param("topicId") Integer topicId,
+                         @Param("status") Integer status,
+                         @Param("updateTime") String updateTime);
 
     /**
      * 统计符合条件的数据
@@ -51,7 +54,8 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
      * @param columnMap 查询条件
      * @return List
      */
-    List<TopicEntity> selectByMap(Page<TopicEntity> page, @Param("cm") Map<String, Object> columnMap);
+    List<TopicEntity> selectByMap(Page<TopicEntity> page,
+                                  @Param("cm") Map<String, Object> columnMap);
 
 
     /**

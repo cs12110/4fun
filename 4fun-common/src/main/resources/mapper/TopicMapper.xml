@@ -59,7 +59,8 @@
         UPDATE
         topic_t
         SET
-        done = #{status}
+        done = #{status},
+        update_time = #{updateTime}
         WHERE
         <choose>
             <when test="topicId != null">
