@@ -155,6 +155,7 @@ public class AnswerTask implements Runnable {
                     if (result.isSuccess()) {
                         count += 1;
                     }
+                    map.put("topicId",entity.getId());
                     map.put("topicName", entity.getName());
                     map.put("author", a.getAuthor());
                     map.put("question", a.getQuestion());
