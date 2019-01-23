@@ -61,4 +61,12 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      * @return List
      */
     List<AnswerEntity> selectByMap1(Page<AnswerEntity> page, @Param("cm") Map<String, Object> columnMap);
+
+    /**
+     * 更新点赞数
+     *
+     * @param answerId 回答id
+     * @param voteNum  点赞数
+     */
+    void updateVoteNum(@Param("id") Integer answerId, @Param("voteNum") Integer voteNum);
 }

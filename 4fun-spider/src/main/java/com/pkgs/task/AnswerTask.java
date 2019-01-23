@@ -10,7 +10,7 @@ import com.pkgs.service.AnswerService;
 import com.pkgs.service.TopicService;
 import com.pkgs.util.PropertiesUtil;
 import com.pkgs.util.SysUtil;
-import com.pkgs.util.ThreadFactoryUtil;
+import com.pkgs.util.ThreadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 
 /**
@@ -35,20 +36,8 @@ public class AnswerTask implements Runnable {
     private static Random random = new Random();
 
     private static final int THREAD_NUM = 2;
-    private static ExecutorService pool;
+    private static ExecutorService pool = ThreadUtil.buildSpiderExecutor(THREAD_NUM);
 
-    static {
-        int keepAliveTime = 0;
-        String prefixName = "spider";
-
-        pool = new ThreadPoolExecutor(
-                THREAD_NUM,
-                THREAD_NUM,
-                keepAliveTime,
-                TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(),
-                ThreadFactoryUtil.buildCustomerThreadFactory(prefixName));
-    }
 
     /**
      * 最小点赞数
@@ -155,7 +144,7 @@ public class AnswerTask implements Runnable {
                     if (result.isSuccess()) {
                         count += 1;
                     }
-                    map.put("topicId",entity.getId());
+                    map.put("topicId", entity.getId());
                     map.put("topicName", entity.getName());
                     map.put("author", a.getAuthor());
                     map.put("question", a.getQuestion());

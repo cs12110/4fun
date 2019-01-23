@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * 爬取精华回答service
  * <p/>
  *
  * @author cs12110 created at: 2019/1/11 9:46
@@ -47,6 +48,9 @@ public class AnswerService {
                 answerId = entity.getId();
                 result.setSuccess(true);
             } else {
+                // 更新点赞数
+                mapper.updateVoteNum(answerId, entity.getUpvoteNum());
+                //如果已经存在,则更新点赞数
                 result.setMsg("exists");
             }
             //处理关系

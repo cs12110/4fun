@@ -138,4 +138,14 @@
         top_answer_t
         <include refid="search"/>
     </select>
+
+
+    <update id="updateVoteNum">
+        UPDATE
+        top_answer_t
+        SET
+        upvote_num = #{voteNum}
+        WHERE
+        id = #{id}
+    </update>
 </mapper>

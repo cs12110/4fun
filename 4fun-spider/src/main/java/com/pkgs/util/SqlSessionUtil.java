@@ -21,7 +21,7 @@ public class SqlSessionUtil {
 
     private static SqlSessionFactory sessionFactory;
 
-    private static boolean isInit = false;
+    private static volatile boolean isInit = false;
 
 
     /**

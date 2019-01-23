@@ -29,7 +29,7 @@
 		</fileSet>
 
 		<!--<fileSet>
-			<directory>${project.build.directory}/classes/pkg</directory>
+			<directory>${project.buildFactory.directory}/classes/pkg</directory>
 			<outputDirectory>/pkg</outputDirectory>
 			<includes>
 				<include>*.xml</include>
