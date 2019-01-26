@@ -1,6 +1,7 @@
 package com.pkgs.entity;
 
 import com.alibaba.fastjson.JSON;
+import lombok.Data;
 
 /**
  * 保存关系实体类
@@ -11,6 +12,7 @@ import com.alibaba.fastjson.JSON;
  * <p>
  * since: 1.0.0
  */
+@Data
 public class MapTopicAnswerEntity {
 
     private Integer id;
@@ -19,29 +21,6 @@ public class MapTopicAnswerEntity {
 
     private Integer answerId;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getTopicId() {
-        return topicId;
-    }
-
-    public void setTopicId(Integer topicId) {
-        this.topicId = topicId;
-    }
-
-    public Integer getAnswerId() {
-        return answerId;
-    }
-
-    public void setAnswerId(Integer answerId) {
-        this.answerId = answerId;
-    }
 
     @Override
     public String toString() {

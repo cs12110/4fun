@@ -1,6 +1,7 @@
 package com.pkgs.entity;
 
 import com.alibaba.fastjson.JSON;
+import lombok.Data;
 
 /**
  * 句子
@@ -10,6 +11,7 @@ import com.alibaba.fastjson.JSON;
  * <p>
  * since: 1.0.0
  */
+@Data
 public class SentenceEntity {
 
     /**
@@ -37,46 +39,7 @@ public class SentenceEntity {
      */
     private String wallpaper;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public String getSentence() {
-        return sentence;
-    }
-
-    public void setSentence(String sentence) {
-        this.sentence = sentence;
-    }
-
-    public Integer getIdx() {
-        return idx;
-    }
-
-    public void setIdx(Integer idx) {
-        this.idx = idx;
-    }
-
-    public String getWallpaper() {
-        return wallpaper;
-    }
-
-    public void setWallpaper(String wallpaper) {
-        this.wallpaper = wallpaper;
-    }
-
+   
     @Override
     public String toString() {
         return JSON.toJSONString(this);
