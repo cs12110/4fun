@@ -122,7 +122,7 @@ public class AnswerTask implements Runnable {
 
         @Override
         public void run() {
-            logger.info("Get answer of: [{}]{} ", entity.getId(), entity.getName());
+            logger.info("Start: [{}-`{}`]", entity.getId(), entity.getName());
 
             AbstractHandler<List<AnswerEntity>> handler = new TopAnswerHandler();
 
@@ -181,7 +181,7 @@ public class AnswerTask implements Runnable {
 
             long spendMills = System.currentTimeMillis() - start;
 
-            logger.info("Get: [{}]{} is done ,add: {},update:{},failure:{}, spend:{} mills",
+            logger.info("[{}-`{}`] add: {}, update: {}, failure: {}, spend: {}(mills)",
                     entity.getId(),
                     entity.getName(),
                     insertCounter,

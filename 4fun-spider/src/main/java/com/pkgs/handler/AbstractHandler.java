@@ -2,15 +2,19 @@ package com.pkgs.handler;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.cookie.CookieSpecProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -29,12 +33,11 @@ public abstract class AbstractHandler<T> {
 
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
-    private static String userAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36";
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36";
+
 
     public void setValue(Object value) {
     }
-
-    ;
 
     /**
      * By get
@@ -42,15 +45,20 @@ public abstract class AbstractHandler<T> {
      * @param url url
      */
     public T get(String url) {
-        CloseableHttpClient client = HttpClientBuilder.create().build();
-        RequestConfig defaultConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
+        CloseableHttpClient client = HttpClients.createDefault();
         String resultStr = null;
 
+        Registry<CookieSpecProvider> cookieSpecProviderRegistry = RegistryBuilder.<CookieSpecProvider>create()
+                .register("CookieHandler", context -> new CookiesHandler()).build();
+
+        //注册自定义CookieSpec
+        HttpClientContext context = HttpClientContext.create();
+        context.setCookieSpecRegistry(cookieSpecProviderRegistry);
         try {
             HttpGet get = new HttpGet(url);
-            get.setConfig(defaultConfig);
+            get.setConfig(RequestConfig.custom().setCookieSpec("CookieHandler").build());
             setUserAgent(get);
-            CloseableHttpResponse result = client.execute(get);
+            CloseableHttpResponse result = client.execute(get, context);
             int code = result.getStatusLine().getStatusCode();
             if (code == HttpStatus.SC_OK) {
                 HttpEntity entity = result.getEntity();
@@ -129,7 +137,7 @@ public abstract class AbstractHandler<T> {
      * @param req {@link HttpUriRequest}
      */
     private void setUserAgent(HttpUriRequest req) {
-        req.setHeader("User-Agent", userAgent);
+        req.setHeader("User-Agent", USER_AGENT);
 
     }
 }
