@@ -3,6 +3,7 @@ package com.pkgs.service;
 import com.pkgs.entity.AnswerEntity;
 import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.MapTopicAnswerEntity;
+import com.pkgs.enums.OperationEnum;
 import com.pkgs.mapper.AnswerMapper;
 import com.pkgs.mapper.MapTopicAnswerMapper;
 import com.pkgs.util.ProxyMapperUtil;
@@ -47,11 +48,18 @@ public class AnswerService {
                 mapper.save(entity);
                 answerId = entity.getId();
                 result.setSuccess(true);
+                result.setOp(OperationEnum.INSERT);
             } else {
                 // 更新点赞数
-                mapper.updateVoteNum(answerId, entity.getUpvoteNum());
-                //如果已经存在,则更新点赞数
-                result.setMsg("exists");
+                int status = mapper.updateVoteNum(answerId, entity.getUpvoteNum());
+                if (status == 0) {
+                    //如果已经存在,则更新点赞数
+                    result.setMsg("nothing to update");
+                } else {
+                    result.setMsg("update vote num");
+                    result.setSuccess(true);
+                    result.setOp(OperationEnum.UPDATE);
+                }
             }
             //处理关系
             mappingTopicAnswer(entity.getTopicId(), answerId);

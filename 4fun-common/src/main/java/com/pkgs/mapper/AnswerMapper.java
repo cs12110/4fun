@@ -67,6 +67,7 @@ public interface AnswerMapper extends BaseMapper<AnswerEntity> {
      *
      * @param answerId 回答id
      * @param voteNum  点赞数
+     * @return 更新成功返回1, 否则返回0
      */
-    void updateVoteNum(@Param("id") Integer answerId, @Param("voteNum") Integer voteNum);
+    int updateVoteNum(@Param("id") Integer answerId, @Param("voteNum") Integer voteNum);
 }

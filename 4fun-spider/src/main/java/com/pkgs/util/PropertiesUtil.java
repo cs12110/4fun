@@ -64,6 +64,25 @@ public class PropertiesUtil {
         logger.info("sys:{}", JSON.toJSONString(cache, true));
     }
 
+    /**
+     * 获取整形数据
+     *
+     * @param key      key
+     * @param defValue 缺省值
+     * @return int
+     */
+    public static int getInt(String key, int defValue) {
+        Object value = get(key);
+        if (null != value) {
+            try {
+                return Integer.parseInt(String.valueOf(value));
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+        return defValue;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T get(String key) {
         return (T) cache.get(key);

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.pkgs.entity.AnswerEntity;
 import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.TopicEntity;
+import com.pkgs.enums.OperationEnum;
 import com.pkgs.handler.AbstractHandler;
 import com.pkgs.handler.TopAnswerHandler;
 import com.pkgs.service.AnswerService;
@@ -35,14 +36,15 @@ public class AnswerTask implements Runnable {
     private static AnswerService answerService = new AnswerService();
     private static Random random = new Random();
 
-    private static final int THREAD_NUM = 2;
-    private static ExecutorService pool = ThreadUtil.buildSpiderExecutor(THREAD_NUM);
-
-
     /**
      * 最小点赞数
      */
-    private static long miniVoteNum = Long.parseLong(PropertiesUtil.get("upVote.minNum", "10000"));
+    private static int miniVoteNum = PropertiesUtil.getInt("upVote.minNum", 10000);
+    /**
+     * 创建线程池
+     */
+    private static final int THREAD_NUM = PropertiesUtil.getInt("spider.threadNum", 2);
+    private static ExecutorService pool = ThreadUtil.buildSpiderExecutor(THREAD_NUM);
 
     @Override
     public void run() {
@@ -120,21 +122,30 @@ public class AnswerTask implements Runnable {
 
         @Override
         public void run() {
-            AbstractHandler<List<AnswerEntity>> handler = new TopAnswerHandler();
             logger.info("Get answer of: [{}]{} ", entity.getId(), entity.getName());
+
+            AbstractHandler<List<AnswerEntity>> handler = new TopAnswerHandler();
+
             int page = 20;
-            int count = 0;
+            int insertCounter = 0;
+            int updateCounter = 0;
+            int failureCounter = 0;
+            long start = System.currentTimeMillis();
+
             boolean gt = true;
+
 
             Map<String, Object> map = new HashMap<>(5);
             // 获取前200条数据
             for (int index = 0; index < page; index++) {
                 handler.setValue(entity.getId());
-                String url = SysUtil.getAnswersUrlOfTopic(getIdFromUrl(entity.getLink()), index * 10, 10);
+                String url = SysUtil.getAnswersUrlOfTopic(
+                        getIdFromUrl(entity.getLink()),
+                        index * 10,
+                        10);
 
-                // 处理每一条数据
                 for (AnswerEntity a : handler.get(url)) {
-                    // 点赞数小于1k
+                    // 点赞数小于10k
                     if (a.getUpvoteNum() < miniVoteNum) {
                         gt = false;
                         break;
@@ -142,15 +153,24 @@ public class AnswerTask implements Runnable {
 
                     ExecResult result = answerService.saveIfNotExists(a);
                     if (result.isSuccess()) {
-                        count += 1;
+                        if (OperationEnum.INSERT == result.getOp()) {
+                            insertCounter++;
+                        } else if (OperationEnum.UPDATE == result.getOp()) {
+                            updateCounter++;
+                        } else {
+                            failureCounter++;
+                        }
                     }
-                    map.put("topicId", entity.getId());
-                    map.put("topicName", entity.getName());
-                    map.put("author", a.getAuthor());
-                    map.put("question", a.getQuestion());
-                    map.put("status", result.isSuccess());
-                    map.put("message", result.getMsg());
-                    logger.info(JSON.toJSONString(map, true));
+
+                    if (result.getOp() == OperationEnum.INSERT) {
+                        map.put("topicId", entity.getId());
+                        map.put("topicName", entity.getName());
+                        map.put("author", a.getAuthor());
+                        map.put("question", a.getQuestion());
+                        map.put("status", result.isSuccess());
+                        map.put("operation", result.getOp());
+                        logger.info(JSON.toJSONString(map, true));
+                    }
                 }
                 if (!gt) {
                     break;
@@ -159,7 +179,15 @@ public class AnswerTask implements Runnable {
             topicService.updateDoneStatus(entity.getId(), 1);
             latch.countDown();
 
-            logger.info("Get: [{}]{} is done ,add: {}", entity.getId(), entity.getName(), count);
+            long spendMills = System.currentTimeMillis() - start;
+
+            logger.info("Get: [{}]{} is done ,add: {},update:{},failure:{}, spend:{} mills",
+                    entity.getId(),
+                    entity.getName(),
+                    insertCounter,
+                    updateCounter,
+                    failureCounter,
+                    spendMills);
         }
     }
 
