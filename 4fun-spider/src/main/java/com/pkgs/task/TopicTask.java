@@ -27,16 +27,12 @@ public class TopicTask implements Runnable {
 
     @Override
     public void run() {
-        int oneHourSeconds = 3600;
-        while (true) {
             logger.info("start working at get topic from zhihu");
             long start = System.currentTimeMillis();
             execute();
             long end = System.currentTimeMillis();
             logger.info("get topic is done,spend:{}", (end - start));
 
-            SysUtil.justStandingHere(oneHourSeconds);
-        }
     }
 
     private void execute() {

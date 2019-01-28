@@ -22,15 +22,11 @@ public class ResetStatusTask implements Runnable {
 
     @Override
     public void run() {
-        int oneMinuteSeconds = 60;
-        while (true) {
-            // 获取尚未爬取的话题
-            List<TopicEntity> list = topicService.queryRemainTopic();
-            if (null != list && list.size() == 0) {
-                logger.info("Reset all status to 0");
-                topicService.updateDoneStatus(null, 0);
-            }
-            SysUtil.justStandingHere(oneMinuteSeconds);
+        // 获取尚未爬取的话题
+        List<TopicEntity> list = topicService.queryRemainTopic();
+        if (null != list && list.size() == 0) {
+            logger.info("Reset all status to 0");
+            topicService.updateDoneStatus(null, 0);
         }
     }
 }

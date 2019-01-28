@@ -48,17 +48,13 @@ public class AnswerTask implements Runnable {
 
     @Override
     public void run() {
-        while (true) {
-            logger.info("start working at get top answer");
-            long start = System.currentTimeMillis();
+        logger.info("start working at get top answer");
+        long start = System.currentTimeMillis();
 
-            execute();
+        execute();
 
-            long end = System.currentTimeMillis();
-            logger.info("get top answer is done,spend:{}", (end - start));
-
-            SysUtil.justStandingHere(60);
-        }
+        long end = System.currentTimeMillis();
+        logger.info("get top answer is done,spend:{}", (end - start));
     }
 
     private void execute() {

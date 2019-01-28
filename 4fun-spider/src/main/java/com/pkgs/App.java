@@ -5,7 +5,9 @@ import com.pkgs.task.ResetStatusTask;
 import com.pkgs.task.TopicTask;
 import com.pkgs.util.ThreadUtil;
 
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * App
@@ -17,16 +19,29 @@ public class App {
 
     public static void main(String[] args) {
 
-        ExecutorService sysExecutor = ThreadUtil.buildTaskPoolExecutor();
+        // 定时线程池
+        ScheduledExecutorService schedule = new ScheduledThreadPoolExecutor(
+                3,
+                ThreadUtil.buildFactory("timer"));
 
-        // 启动重设爬话题取状态任务
-        sysExecutor.submit(new ResetStatusTask());
+        // 答案爬虫定时器
+        schedule.scheduleAtFixedRate(
+                new AnswerTask(),
+                10,
+                60, TimeUnit.SECONDS);
 
-        // 启动爬取话题任务
-        sysExecutor.submit(new TopicTask());
+        // 重设状态爬虫定时器
+        schedule.scheduleAtFixedRate(
+                new ResetStatusTask(),
+                10,
+                120, TimeUnit.SECONDS);
 
-        // 启动爬取话题下面精华回答任务
-        sysExecutor.submit(new AnswerTask());
+        // 话题定时器
+        schedule.scheduleAtFixedRate(
+                new TopicTask(),
+                10,
+                3600, TimeUnit.SECONDS);
+
     }
 
 }
