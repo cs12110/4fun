@@ -14,11 +14,11 @@ public class TopTopicHandlerTest {
     private TopicService service = new TopicService();
 
     @Test
-    public void test() throws Exception {
+    public void test() {
 
         String url = "https://www.zhihu.com/topics";
 
-        AbstractHandler<List<TopicEntity>> h = new TopTopicHandler();
+        AbstractHandler<Object, List<TopicEntity>> h = new TopTopicHandler();
         List<TopicEntity> list = h.get(url);
 
         for (TopicEntity t : list) {

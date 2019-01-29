@@ -120,7 +120,7 @@ public class AnswerTask implements Runnable {
         public void run() {
             logger.info("Start: [{}-`{}`]", entity.getId(), entity.getName());
 
-            AbstractHandler<List<AnswerEntity>> handler = new TopAnswerHandler();
+            AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
 
             int page = 20;
             int insertCounter = 0;

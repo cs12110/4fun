@@ -9,10 +9,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -20,48 +20,46 @@ import java.util.stream.Collectors;
  *
  * @author cs12110 at 2018年12月10日下午9:54:47
  */
-public class SubTopicHandler extends AbstractHandler<List<TopicEntity>> {
+public class SubTopicHandler extends AbstractHandler<Integer, List<TopicEntity>> {
 
     private Integer parentId;
 
     @Override
-    public void setValue(Object value) {
-        this.parentId = Integer.parseInt(String.valueOf(value));
+    public void setValue(Integer value) {
+        this.parentId = value;
     }
 
     @Override
-    public List<TopicEntity> parse(String html) {
+    public List<TopicEntity> parse(String html, String reqUrl) {
         if (null == html) {
             return Collections.emptyList();
         }
         try {
             JSONObject json = JSON.parseObject(html);
             JSONArray arr = (JSONArray) json.get("msg");
-
             if (arr != null) {
                 return arr.stream()
-                        .map(obj -> toEntity(String.valueOf(obj)))
+                        // 转换成entity对象
+                        .map(obj -> toTopicEntityFunction.apply(String.valueOf(obj)))
+                        // 过滤为null的对象
                         .filter(Objects::nonNull)
-                        .peek(e -> {
-                            e.setDone(0);
-                        })
+                        // 设置状态位
+                        .peek(e -> e.setDone(0))
+                        // collect
                         .collect(Collectors.toList());
 
             }
-            return Collections.emptyList();
         } catch (Exception e) {
             logger.error("{}", e);
         }
         return Collections.emptyList();
     }
 
+
     /**
-     * 转换成topic对象
-     *
-     * @param text html内容
-     * @return {@link TopicEntity}
+     * 将数据转换成对象
      */
-    private TopicEntity toEntity(String text) {
+    private Function<String, TopicEntity> toTopicEntityFunction = (text) -> {
         TopicEntity entity = new TopicEntity();
         try {
             Document doc = Jsoup.parse(text);
@@ -77,5 +75,5 @@ public class SubTopicHandler extends AbstractHandler<List<TopicEntity>> {
             e.printStackTrace();
             return null;
         }
-    }
+    };
 }

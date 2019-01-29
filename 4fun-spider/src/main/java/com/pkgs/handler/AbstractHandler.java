@@ -2,16 +2,11 @@ package com.pkgs.handler;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.config.Registry;
-import org.apache.http.config.RegistryBuilder;
-import org.apache.http.cookie.CookieSpecProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -26,17 +21,34 @@ import java.util.Map;
 
 /**
  * 工具类
+ * <p>
+ * FYI:
+ * <pre>
+ * P: parameter type
+ * R: result type
+ * </pre>
  *
  * @author cs12110 at 2018年12月10日下午9:40:14
  */
-public abstract class AbstractHandler<T> {
+public abstract class AbstractHandler<P, R> {
 
+    /**
+     * 日志类
+     */
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
+    /**
+     * User Agent
+     */
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.110 Safari/537.36";
 
 
-    public void setValue(Object value) {
+    /**
+     * 设置值
+     *
+     * @param value 值
+     */
+    public void setValue(P value) {
     }
 
     /**
@@ -44,21 +56,15 @@ public abstract class AbstractHandler<T> {
      *
      * @param url url
      */
-    public T get(String url) {
-        CloseableHttpClient client = HttpClients.createDefault();
+    public R get(String url) {
         String resultStr = null;
 
-        Registry<CookieSpecProvider> cookieSpecProviderRegistry = RegistryBuilder.<CookieSpecProvider>create()
-                .register("CookieHandler", context -> new CookiesHandler()).build();
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpGet get = new HttpGet(url);
+        setUserAgent(get);
 
-        //注册自定义CookieSpec
-        HttpClientContext context = HttpClientContext.create();
-        context.setCookieSpecRegistry(cookieSpecProviderRegistry);
-        try {
-            HttpGet get = new HttpGet(url);
-            get.setConfig(RequestConfig.custom().setCookieSpec("CookieHandler").build());
-            setUserAgent(get);
-            CloseableHttpResponse result = client.execute(get, context);
+        // 使用 try...resource
+        try (CloseableHttpResponse result = client.execute(get)) {
             int code = result.getStatusLine().getStatusCode();
             if (code == HttpStatus.SC_OK) {
                 HttpEntity entity = result.getEntity();
@@ -66,43 +72,45 @@ public abstract class AbstractHandler<T> {
             } else {
                 logger.info("failure to get:{},{}", url, result.getStatusLine());
             }
-            result.close();
+
+            closeHttpClient(client);
         } catch (Exception e) {
             logger.error("{}", e);
-        } finally {
-            try {
-                client.close();
-            } catch (Exception e) {
-                //do nothing
-            }
         }
-        return parse(resultStr);
+
+        return parse(resultStr, url);
     }
+
 
     /**
      * By post
      *
      * @param url    url
      * @param params 查询参数
-     * @return T
+     * @return R
      */
-    public T post(String url, Map<String, String> params) {
-        CloseableHttpClient client = HttpClientBuilder.create().build();
+    public R post(String url, Map<String, String> params) {
         String resultStr = null;
-        try {
-            HttpPost post = new HttpPost(url);
-            setUserAgent(post);
+        CloseableHttpClient client = HttpClientBuilder.create().build();
+        HttpPost post = new HttpPost(url);
+        setUserAgent(post);
 
-            if (null != params && params.size() > 0) {
-                List<BasicNameValuePair> list = new ArrayList<>();
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    list.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-                }
+        // 设置请求参数
+        if (null != params && params.size() > 0) {
+            List<BasicNameValuePair> list = new ArrayList<>();
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                list.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
+            }
+            try {
                 UrlEncodedFormEntity entity = new UrlEncodedFormEntity(list, "utf-8");
                 post.setEntity(entity);
+            } catch (Exception e) {
+                logger.error("{}", e);
             }
+        }
 
-            CloseableHttpResponse result = client.execute(post);
+        // 请求
+        try (CloseableHttpResponse result = client.execute(post)) {
             int code = result.getStatusLine().getStatusCode();
             if (code == HttpStatus.SC_OK) {
                 HttpEntity entity = result.getEntity();
@@ -110,26 +118,13 @@ public abstract class AbstractHandler<T> {
             } else {
                 logger.info("failure to post:{},{}", url, result.getStatusLine());
             }
-            result.close();
+            closeHttpClient(client);
         } catch (Exception e) {
             logger.error("{}", e);
-        } finally {
-            try {
-                client.close();
-            } catch (Exception e) {
-                //do nothing
-            }
         }
-        return parse(resultStr);
-    }
 
-    /**
-     * 转换成实体类
-     *
-     * @param html html
-     * @return T
-     */
-    public abstract T parse(String html);
+        return parse(resultStr, url);
+    }
 
     /**
      * 设置user-agent
@@ -138,6 +133,31 @@ public abstract class AbstractHandler<T> {
      */
     private void setUserAgent(HttpUriRequest req) {
         req.setHeader("User-Agent", USER_AGENT);
-
     }
+
+    /**
+     * 关闭http client
+     *
+     * @param client client
+     */
+    private static void closeHttpClient(CloseableHttpClient client) {
+        if (null != client) {
+            try {
+                client.close();
+            } catch (Exception e) {
+                // do nothing
+            }
+        }
+    }
+
+    /**
+     * 转换成实体类
+     *
+     * @param html   html
+     * @param reqUrl 请求地址
+     * @return R
+     */
+    public abstract R parse(String html, String reqUrl);
+
+
 }

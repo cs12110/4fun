@@ -49,7 +49,7 @@ public class TopicTask implements Runnable {
      */
     private void getAllTopTopic() {
         // 1. 首先查询出来所有的父级话题
-        AbstractHandler<List<TopicEntity>> topHandler = new TopTopicHandler();
+        AbstractHandler<Object, List<TopicEntity>> topHandler = new TopTopicHandler();
         topHandler.get(SysUtil.TOPIC_URL).forEach(topicService::saveIfNotExists);
     }
 
@@ -62,7 +62,7 @@ public class TopicTask implements Runnable {
      * 根据父级话题获取所有子话题
      */
     private void getChildTopic() {
-        AbstractHandler<List<TopicEntity>> subHandler = new SubTopicHandler();
+        AbstractHandler<Integer, List<TopicEntity>> subHandler = new SubTopicHandler();
         List<TopicEntity> topList = topicService.queryTopTopic();
         for (TopicEntity e : topList) {
             try {

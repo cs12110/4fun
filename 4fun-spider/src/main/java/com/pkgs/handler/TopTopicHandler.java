@@ -17,10 +17,10 @@ import com.pkgs.entity.TopicEntity;
  *
  * @author cs12110 at 2018年12月10日下午9:54:47
  */
-public class TopTopicHandler extends AbstractHandler<List<TopicEntity>> {
+public class TopTopicHandler extends AbstractHandler<Object, List<TopicEntity>> {
 
     @Override
-    public List<TopicEntity> parse(String html) {
+    public List<TopicEntity> parse(String html, String reqUrl) {
         if (null == html) {
             return Collections.emptyList();
         }

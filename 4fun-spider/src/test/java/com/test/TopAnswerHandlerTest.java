@@ -12,14 +12,14 @@ import com.pkgs.util.SysUtil;
 
 public class TopAnswerHandlerTest {
 
-    AnswerService topAnswerService = new AnswerService();
+    private AnswerService topAnswerService = new AnswerService();
 
     @Test
     public void test() throws Exception {
 
         String url = SysUtil.getAnswersUrlOfTopic("19555513", 0, 10);
 
-        AbstractHandler<List<AnswerEntity>> h = new TopAnswerHandler();
+        AbstractHandler<Integer, List<AnswerEntity>> h = new TopAnswerHandler();
         h.setValue(34);
         List<AnswerEntity> list = h.get(url);
 
