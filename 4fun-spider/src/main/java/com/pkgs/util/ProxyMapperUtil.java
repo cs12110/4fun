@@ -41,10 +41,11 @@ public class ProxyMapperUtil implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) {
         SqlSession session = SqlSessionUtil.openSession();
+        Object sessionMapper = session.getMapper(this.mapper);
         Object result = null;
 
         try {
-            result = method.invoke(session.getMapper(this.mapper), args);
+            result = method.invoke(sessionMapper, args);
             session.commit();
         } catch (Exception e) {
             e.printStackTrace();

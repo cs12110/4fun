@@ -40,10 +40,16 @@ public class AnswerTask implements Runnable {
      * 最小点赞数
      */
     private static int miniVoteNum = PropertiesUtil.getInt("upVote.minNum", 10000);
+
+    /**
+     * 获取topic页数
+     */
+    private static int pageNum = PropertiesUtil.getInt("answer.pageNum", 20);
+
     /**
      * 创建线程池
      */
-    private static final int THREAD_NUM = PropertiesUtil.getInt("spider.threadNum", 2);
+    private static final int THREAD_NUM = PropertiesUtil.getInt("spider.threadNum", 3);
     private static ExecutorService pool = ThreadUtil.buildSpiderExecutor(THREAD_NUM);
 
     @Override
@@ -107,6 +113,35 @@ public class AnswerTask implements Runnable {
                 .collect(Collectors.toList());
     }
 
+    static class ShowOff {
+        /**
+         * 插入条数
+         */
+        int insertCounter = 0;
+        /**
+         * 更新条数
+         */
+        int updateCounter = 0;
+        /**
+         * 失败条数
+         */
+        int failureCounter = 0;
+
+        void count(ExecResult result) {
+            if (result.isSuccess()) {
+                if (OperationEnum.INSERT == result.getOp()) {
+                    insertCounter++;
+                } else if (OperationEnum.UPDATE == result.getOp()) {
+                    updateCounter++;
+                } else {
+                    failureCounter++;
+                }
+            } else {
+                failureCounter++;
+            }
+        }
+    }
+
     static class MySpider implements Runnable {
         private TopicEntity entity;
         private CountDownLatch latch;
@@ -119,72 +154,75 @@ public class AnswerTask implements Runnable {
         @Override
         public void run() {
             logger.info("Start: [{}-`{}`]", entity.getId(), entity.getName());
-
-            AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
-
-            int page = 20;
-            int insertCounter = 0;
-            int updateCounter = 0;
-            int failureCounter = 0;
             long start = System.currentTimeMillis();
 
-            boolean gt = true;
+            ShowOff showOff = new ShowOff();
+            AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
 
-
-            Map<String, Object> map = new HashMap<>(5);
-            // 获取前200条数据
-            for (int index = 0; index < page; index++) {
+            outside:
+            for (int index = 0; index < pageNum; index++) {
                 handler.setValue(entity.getId());
-                String url = SysUtil.getAnswersUrlOfTopic(
-                        getIdFromUrl(entity.getLink()),
-                        index * 10,
-                        10);
+                String topicId = getIdFromUrl(entity.getLink());
+                String url = SysUtil.getAnswersUrlOfTopic(topicId, index * 10, 10);
 
                 for (AnswerEntity a : handler.get(url)) {
                     // 点赞数小于10k
                     if (a.getUpvoteNum() < miniVoteNum) {
-                        gt = false;
-                        break;
+                        logger.debug("Break up {} on page:{}", entity.getName(), index);
+                        break outside;
                     }
 
+                    // 执行存储操作
                     ExecResult result = answerService.saveIfNotExists(a);
-                    if (result.isSuccess()) {
-                        if (OperationEnum.INSERT == result.getOp()) {
-                            insertCounter++;
-                        } else if (OperationEnum.UPDATE == result.getOp()) {
-                            updateCounter++;
-                        } else {
-                            failureCounter++;
-                        }
-                    }
-
+                    showOff.count(result);
                     if (result.getOp() == OperationEnum.INSERT) {
-                        map.put("topicId", entity.getId());
-                        map.put("topicName", entity.getName());
-                        map.put("author", a.getAuthor());
-                        map.put("question", a.getQuestion());
-                        map.put("status", result.isSuccess());
-                        map.put("operation", result.getOp());
+                        Map<String, Object> map = buildLogMap(a, result);
                         logger.info(JSON.toJSONString(map, true));
                     }
-                }
-                if (!gt) {
-                    break;
                 }
             }
             topicService.updateDoneStatus(entity.getId(), 1);
             latch.countDown();
 
-            long spendMills = System.currentTimeMillis() - start;
+            // 报告日志
+            makeAReport(showOff, System.currentTimeMillis() - start);
+        }
 
+        /**
+         * makeAReport log
+         *
+         * @param showOff    show off
+         * @param spendMills spend times
+         */
+        private void makeAReport(ShowOff showOff, long spendMills) {
             logger.info("[{}-`{}`] add: {}, update: {}, failure: {}, spend: {}(mills)",
                     entity.getId(),
                     entity.getName(),
-                    insertCounter,
-                    updateCounter,
-                    failureCounter,
+                    showOff.insertCounter,
+                    showOff.updateCounter,
+                    showOff.failureCounter,
                     spendMills);
         }
+
+        /**
+         * 构建显示新增数据
+         *
+         * @param answer answer对象
+         * @param result 执行结果
+         * @return Map
+         */
+        private Map<String, Object> buildLogMap(AnswerEntity answer, ExecResult result) {
+            Map<String, Object> map = new HashMap<>(5);
+            map.put("topicId", entity.getId());
+            map.put("topicName", entity.getName());
+            map.put("author", answer.getAuthor());
+            map.put("question", answer.getQuestion());
+            map.put("status", result.isSuccess());
+            map.put("operation", result.getOp());
+
+            return map;
+        }
+
     }
 
     /**
@@ -200,5 +238,6 @@ public class AnswerTask implements Runnable {
         int last = url.lastIndexOf("/");
         return url.substring(last + 1);
     }
+
 
 }

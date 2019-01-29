@@ -14,26 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadUtil {
 
     /**
-     * 创建系统任务启动线程
-     *
-     * @return ExecutorService
-     */
-    public static ExecutorService buildTaskPoolExecutor() {
-        int coreSize = 3;
-        int maxSize = 3;
-        int keepAlie = 0;
-
-
-        return new ThreadPoolExecutor(
-                coreSize,
-                maxSize,
-                keepAlie,
-                TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(),
-                buildFactory("startup"));
-    }
-
-    /**
      * 获取爬虫执行线程池
      *
      * @param coreSize coreSize

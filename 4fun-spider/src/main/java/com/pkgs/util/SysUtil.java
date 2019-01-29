@@ -31,9 +31,11 @@ public class SysUtil {
     public static Map<String, String> buildSubTopicSearchMap(String dataId, int offset) {
         String params = "{\"topic_id\":" + dataId + ",\"offset\":" + offset
                 + ",\"hash_id\":\"e93e70a5b1b8de26108cbf8cad759536\"}";
+
         Map<String, String> map = new HashMap<>(2);
         map.put("method", "next");
         map.put("params", params);
+
         return map;
     }
 
@@ -46,7 +48,12 @@ public class SysUtil {
      * @return String
      */
     public static String getAnswersUrlOfTopic(String topicId, int offset, int limit) {
-        return "https://www.zhihu.com/api/v4/topics/" + topicId + "/feeds/essence?limit=" + limit + "&offset=" + offset;
+        return "https://www.zhihu.com/api/v4/topics/"
+                + topicId
+                + "/feeds/essence?limit="
+                + limit
+                + "&offset="
+                + offset;
     }
 
     /**
@@ -57,7 +64,10 @@ public class SysUtil {
      * @return String
      */
     public static String getAnswerLink(String questionId, String answerId) {
-        return "https://www.zhihu.com/question/" + questionId + "/answer/" + answerId;
+        return "https://www.zhihu.com/question/"
+                + questionId
+                + "/answer/"
+                + answerId;
     }
 
 
