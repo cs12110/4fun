@@ -59,6 +59,7 @@ public abstract class AbstractHandler<P, R> {
     public R get(String url) {
         String resultStr = null;
 
+        // client是否要关闭?
         CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet(url);
         setUserAgent(get);
@@ -72,7 +73,6 @@ public abstract class AbstractHandler<P, R> {
             } else {
                 logger.info("failure to get:{},{}", url, result.getStatusLine());
             }
-
             closeHttpClient(client);
         } catch (Exception e) {
             logger.error("{}", e);
