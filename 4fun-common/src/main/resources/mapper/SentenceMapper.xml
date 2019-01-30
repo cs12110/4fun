@@ -3,7 +3,7 @@
 <mapper namespace="com.pkgs.mapper.SentenceMapper">
 
     <!-- resultMap -->
-    <resultMap id="resultMap" type="com.pkgs.entity.SentenceEntity">
+    <resultMap id="resultMap" type="com.pkgs.entity.zhihu.SentenceEntity">
         <result column="id" property="id"/>
         <result column="author" property="author"/>
         <result column="sentence" property="sentence"/>
@@ -39,7 +39,7 @@
         </where>
     </sql>
 
-    <insert id="save" parameterType="com.pkgs.entity.SentenceEntity">
+    <insert id="save" parameterType="com.pkgs.entity.zhihu.SentenceEntity">
         INSERT INTO sentence_t(
         `id` ,
         `author` ,
@@ -63,7 +63,7 @@
         <include refid="search"/>
     </select>
 
-    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.SentenceEntity">
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.zhihu.SentenceEntity">
         SELECT
         COUNT(*)
         FROM

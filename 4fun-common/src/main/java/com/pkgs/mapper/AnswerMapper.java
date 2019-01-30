@@ -2,7 +2,7 @@ package com.pkgs.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.zhihu.AnswerEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

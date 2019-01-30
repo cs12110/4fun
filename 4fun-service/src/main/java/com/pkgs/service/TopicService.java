@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.TopicEntity;
+import com.pkgs.entity.zhihu.TopicEntity;
 import com.pkgs.mapper.TopicMapper;
 
 /**

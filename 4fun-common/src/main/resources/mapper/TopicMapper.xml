@@ -3,7 +3,7 @@
 <mapper namespace="com.pkgs.mapper.TopicMapper">
 
     <!-- resultMap -->
-    <resultMap id="resultMap" type="com.pkgs.entity.TopicEntity">
+    <resultMap id="resultMap" type="com.pkgs.entity.zhihu.TopicEntity">
         <result column="id" property="id"/>
         <result column="parent_id" property="parentId"/>
         <result column="data_id" property="dataId"/>
@@ -74,7 +74,7 @@
     </update>
 
 
-    <insert id="save" parameterType="com.pkgs.entity.TopicEntity" useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="com.pkgs.entity.zhihu.TopicEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO topic_t(
         `parent_id` ,
         `data_id` ,
@@ -131,7 +131,7 @@
         AND map_topic_answer_t.answer_id IS NOT NULL
     </select>
 
-    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.TopicEntity">
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.zhihu.TopicEntity">
         SELECT
         COUNT(*)
         FROM

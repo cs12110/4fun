@@ -2,7 +2,7 @@ package com.test;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.App;
-import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.zhihu.AnswerEntity;
 import com.pkgs.service.AnswerService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

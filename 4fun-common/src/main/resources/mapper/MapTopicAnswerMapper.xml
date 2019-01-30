@@ -3,7 +3,7 @@
 <mapper namespace="com.pkgs.mapper.MapTopicAnswerMapper">
 
     <!-- resultMap -->
-    <resultMap id="resultMap" type="com.pkgs.entity.MapTopicAnswerEntity">
+    <resultMap id="resultMap" type="com.pkgs.entity.zhihu.MapTopicAnswerEntity">
         <result column="id" property="id"/>
         <result column="topic_id" property="topicId"/>
         <result column="answer_id" property="answerId"/>
@@ -29,7 +29,7 @@
         </where>
     </sql>
 
-    <insert id="save" parameterType="com.pkgs.entity.MapTopicAnswerEntity"  useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="com.pkgs.entity.zhihu.MapTopicAnswerEntity" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO map_topic_answer_t(
         `topic_id` ,
         `answer_id`
@@ -47,7 +47,7 @@
         WHERE
     </select>
 
-    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.MapTopicAnswerEntity">
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.zhihu.MapTopicAnswerEntity">
         SELECT
         COUNT(*)
         FROM

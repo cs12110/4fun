@@ -1,6 +1,6 @@
 package com.test;
 
-import com.pkgs.entity.SentenceEntity;
+import com.pkgs.entity.zhihu.SentenceEntity;
 import com.pkgs.util.AutoGenUtil;
 import org.junit.Test;
 

@@ -1,7 +1,7 @@
 package com.test;
 
 import com.pkgs.App;
-import com.pkgs.entity.TopicEntity;
+import com.pkgs.entity.zhihu.TopicEntity;
 import com.pkgs.service.TopicService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

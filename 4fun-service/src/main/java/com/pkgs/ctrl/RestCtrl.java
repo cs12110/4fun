@@ -3,7 +3,7 @@ package com.pkgs.ctrl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.conf.anno.AntiResubmitAnno;
-import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.zhihu.AnswerEntity;
 import com.pkgs.service.AnswerService;
 import com.pkgs.service.TopicService;
 import io.swagger.annotations.Api;

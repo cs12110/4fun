@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.AnswerEntity;
+import com.pkgs.entity.zhihu.AnswerEntity;
 import com.pkgs.mapper.AnswerMapper;
 
 /**

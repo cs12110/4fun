@@ -4,7 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.pkgs.entity.MapTopicAnswerEntity;
+import com.pkgs.entity.zhihu.MapTopicAnswerEntity;
 
 /**
  * TODO: MapperXML.vm for MapTopicAnswer
