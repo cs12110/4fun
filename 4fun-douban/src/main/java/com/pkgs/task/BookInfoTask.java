@@ -73,6 +73,9 @@ public class BookInfoTask {
 
     private void processList(Integer tagId, List<String> bookList) {
         for (String bookUrl : bookList) {
+            if (infoService.isExists(bookUrl)) {
+                continue;
+            }
             BookInfoEntity entity = bookInfoHandler.get(bookUrl);
             ExecResult result = infoService.saveIfNotExist(tagId, entity);
 

@@ -21,6 +21,12 @@ public class BookInfoService {
     private BookInfoMapper bookInfoMapper = ProxyMapperUtil.wrapper(BookInfoMapper.class);
     private MapTagInfoMapper mapTagInfoMapper = ProxyMapperUtil.wrapper(MapTagInfoMapper.class);
 
+
+    public boolean isExists(String link) {
+        Integer bookId = bookInfoMapper.selectIdByLink(link);
+        return null != bookId;
+    }
+
     public ExecResult saveIfNotExist(Integer tagId, BookInfoEntity entity) {
 
         ExecResult result = new ExecResult();
