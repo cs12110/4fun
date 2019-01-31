@@ -1,4 +1,4 @@
-package com.pkgs.entity;
+package com.pkgs.entity.operation;
 
 import com.alibaba.fastjson.JSON;
 import com.pkgs.enums.OperationEnum;

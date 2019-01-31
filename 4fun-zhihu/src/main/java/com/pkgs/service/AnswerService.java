@@ -1,11 +1,12 @@
 package com.pkgs.service;
 
+import com.pkgs.entity.operation.ExecResult;
 import com.pkgs.entity.zhihu.AnswerEntity;
-import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.zhihu.MapTopicAnswerEntity;
 import com.pkgs.enums.OperationEnum;
 import com.pkgs.mapper.AnswerMapper;
 import com.pkgs.mapper.MapTopicAnswerMapper;
+import com.pkgs.util.ProxyMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

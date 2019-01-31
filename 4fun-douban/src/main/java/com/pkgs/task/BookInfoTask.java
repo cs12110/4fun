@@ -1,12 +1,16 @@
 package com.pkgs.task;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.douban.BookInfoEntity;
 import com.pkgs.entity.douban.BookTagEntity;
+import com.pkgs.entity.operation.ExecResult;
 import com.pkgs.handler.BookInfoHandler;
 import com.pkgs.handler.BookListHandler;
 import com.pkgs.service.BookInfoService;
 import com.pkgs.service.BookTagService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +25,8 @@ import java.util.Map;
  * since: 1.0.0
  */
 public class BookInfoTask {
+
+    private static Logger logger = LoggerFactory.getLogger(BookInfoTask.class);
 
     private BookTagService tagService = new BookTagService();
     private BookInfoService infoService = new BookInfoService();
@@ -68,7 +74,17 @@ public class BookInfoTask {
     private void processList(Integer tagId, List<String> bookList) {
         for (String bookUrl : bookList) {
             BookInfoEntity entity = bookInfoHandler.get(bookUrl);
-            infoService.saveIfNotExist(tagId, entity);
+            ExecResult result = infoService.saveIfNotExist(tagId, entity);
+
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("success", result.isSuccess());
+            map.put("op", result.getOp());
+            map.put("bookName", entity.getName());
+            map.put("author", entity.getAuthor());
+
+            logger.info("{}", JSON.toJSONString(map, true));
+
             sleep(15);
         }
     }

@@ -3,6 +3,7 @@ package com.test;
 import com.pkgs.entity.zhihu.TopicEntity;
 import com.pkgs.mapper.TopicMapper;
 import com.pkgs.service.TopicService;
+import com.pkgs.util.SqlSessionUtil;
 import org.apache.ibatis.session.SqlSession;
 import org.junit.Test;
 

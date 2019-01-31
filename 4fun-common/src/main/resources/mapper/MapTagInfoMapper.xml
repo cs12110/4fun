@@ -16,10 +16,10 @@
     <sql id="search">
         <where>
             <if test="cm.tagId != null and cm.tagId != ''">
-                AND `tag_id` LIKE concat('%',#{cm.tagId},'%')
+                AND `tag_id` = #{cm.tagId}
             </if>
             <if test="cm.bookId != null and cm.bookId != ''">
-                AND `book_id` LIKE concat('%',#{cm.bookId},'%')
+                AND `book_id` = #{cm.bookId}
             </if>
         </where>
     </sql>

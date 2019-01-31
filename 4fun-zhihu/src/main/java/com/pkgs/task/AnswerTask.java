@@ -1,8 +1,8 @@
 package com.pkgs.task;
 
 import com.alibaba.fastjson.JSON;
+import com.pkgs.entity.operation.ExecResult;
 import com.pkgs.entity.zhihu.AnswerEntity;
-import com.pkgs.entity.ExecResult;
 import com.pkgs.entity.zhihu.TopicEntity;
 import com.pkgs.enums.OperationEnum;
 import com.pkgs.handler.AbstractHandler;

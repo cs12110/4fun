@@ -1,13 +1,12 @@
 package com.pkgs.service;
 
-import com.alibaba.fastjson.JSON;
 import com.pkgs.entity.douban.BookInfoEntity;
 import com.pkgs.entity.douban.MapTagInfoEntity;
+import com.pkgs.entity.operation.ExecResult;
+import com.pkgs.enums.OperationEnum;
 import com.pkgs.mapper.BookInfoMapper;
 import com.pkgs.mapper.MapTagInfoMapper;
 import com.pkgs.util.ProxyMapperUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 书籍信息业务类
@@ -19,19 +18,20 @@ import org.slf4j.LoggerFactory;
  * since: 1.0.0
  */
 public class BookInfoService {
-
-    private static Logger logger = LoggerFactory.getLogger(BookTagService.class);
-
     private BookInfoMapper bookInfoMapper = ProxyMapperUtil.wrapper(BookInfoMapper.class);
     private MapTagInfoMapper mapTagInfoMapper = ProxyMapperUtil.wrapper(MapTagInfoMapper.class);
 
-    public void saveIfNotExist(Integer tagId, BookInfoEntity entity) {
+    public ExecResult saveIfNotExist(Integer tagId, BookInfoEntity entity) {
+
+        ExecResult result = new ExecResult();
+        result.setSuccess(false);
+
         Integer bookId = bookInfoMapper.selectIdByLink(entity.getLink());
         if (bookId == null) {
             bookInfoMapper.save(entity);
             bookId = entity.getId();
-        } else {
-            logger.info("Exists:{}", JSON.toJSONString(entity));
+            result.setSuccess(true);
+            result.setOp(OperationEnum.INSERT);
         }
 
         MapTagInfoEntity search = new MapTagInfoEntity();
@@ -41,6 +41,10 @@ public class BookInfoService {
         int count = mapTagInfoMapper.selectCount(search);
         if (count == 0) {
             mapTagInfoMapper.save(search);
+            result.setSuccess(true);
+            result.setOp(OperationEnum.UPDATE);
         }
+
+        return result;
     }
 }
