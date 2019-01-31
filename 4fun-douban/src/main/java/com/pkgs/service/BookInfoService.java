@@ -29,15 +29,16 @@ public class BookInfoService {
 
     public ExecResult saveIfNotExist(Integer tagId, BookInfoEntity entity) {
 
+        boolean saved = false;
         ExecResult result = new ExecResult();
         result.setSuccess(false);
-
         Integer bookId = bookInfoMapper.selectIdByLink(entity.getLink());
         if (bookId == null) {
             bookInfoMapper.save(entity);
             bookId = entity.getId();
             result.setSuccess(true);
             result.setOp(OperationEnum.INSERT);
+            saved = true;
         }
 
         MapTagInfoEntity search = new MapTagInfoEntity();
@@ -48,7 +49,9 @@ public class BookInfoService {
         if (count == 0) {
             mapTagInfoMapper.save(search);
             result.setSuccess(true);
-            result.setOp(OperationEnum.UPDATE);
+            if (!saved) {
+                result.setOp(OperationEnum.UPDATE);
+            }
         }
 
         return result;
