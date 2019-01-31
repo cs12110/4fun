@@ -113,6 +113,6 @@ public class BookInfoHandler extends AbstractHandler<Object, BookInfoEntity> {
             return null;
         }
         String text = introElements.text();
-        return text.trim();
+        return text.trim().substring(0, 1000);
     }
 }

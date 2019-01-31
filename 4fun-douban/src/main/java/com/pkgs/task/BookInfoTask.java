@@ -76,18 +76,21 @@ public class BookInfoTask {
             if (infoService.isExists(bookUrl)) {
                 continue;
             }
-            BookInfoEntity entity = bookInfoHandler.get(bookUrl);
-            ExecResult result = infoService.saveIfNotExist(tagId, entity);
+            try {
+                BookInfoEntity entity = bookInfoHandler.get(bookUrl);
+                ExecResult result = infoService.saveIfNotExist(tagId, entity);
 
 
-            Map<String, Object> map = new HashMap<>();
-            map.put("success", result.isSuccess());
-            map.put("op", result.getOp());
-            map.put("bookName", entity.getName());
-            map.put("author", entity.getAuthor());
+                Map<String, Object> map = new HashMap<>();
+                map.put("success", result.isSuccess());
+                map.put("op", result.getOp());
+                map.put("bookName", entity.getName());
+                map.put("author", entity.getAuthor());
 
-            logger.info("{}", JSON.toJSONString(map, true));
-
+                logger.info("{}", JSON.toJSONString(map, true));
+            } catch (Exception e) {
+                logger.error("{}", e);
+            }
             sleep(15);
         }
     }
