@@ -38,6 +38,15 @@ public interface BookTagMapper extends BaseMapper<BookTagEntity> {
     int updatePageNum(@Param("tagId") Integer id, @Param("page") Integer page);
 
     /**
+     * 更新状态
+     *
+     * @param id     id
+     * @param status 状态值
+     * @return int
+     */
+    int updateStatus(@Param("id") Integer id, @Param("status") Integer status);
+
+    /**
      * 统计符合条件的数据
      *
      * @param search 查询条件

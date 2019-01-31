@@ -49,11 +49,15 @@ public class BookInfoTask {
     }
 
     private void workout(BookTagEntity entity) {
+        int page = entity.getPage();
         int pageNum = getLastPageNum(entity.getBooks());
         pageNum = pageNum > 200 ? 200 : pageNum;
 
-        for (int index = 0; index < pageNum; index++) {
+
+        for (int index = page+1; index < pageNum; index++) {
             int start = index * PRE_PAGE_NUM;
+
+            logger.info("Start {}-{}", entity.getName(), index);
 
             String reqUrl = entity.getLink() + "?start=" + start;
 
@@ -61,8 +65,13 @@ public class BookInfoTask {
             processList(entity.getId(), bookList);
             tagService.updatePageNum(entity.getId(), index);
 
-            sleep(60);
+
+            logger.info("Get {}-{} is done", entity.getName(), index);
+            sleep(30);
+
         }
+
+        tagService.updateStatus(entity.getId(), 1);
     }
 
     private int getLastPageNum(int books) {
