@@ -112,7 +112,8 @@ public class BookInfoHandler extends AbstractHandler<Object, BookInfoEntity> {
         if (null == introElements) {
             return null;
         }
-        String text = introElements.text();
-        return text.trim().substring(0, 1000);
+        String text = introElements.text().trim();
+        int len = text.length() > 1000 ? 1000 : text.length();
+        return text.trim().substring(0, len);
     }
 }
