@@ -3,7 +3,6 @@ package com.pkgs.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.zhihu.TopicEntity;
 import com.pkgs.mapper.TopicMapper;
-import com.pkgs.util.ProxyMapperUtil;
 import com.pkgs.util.SysUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

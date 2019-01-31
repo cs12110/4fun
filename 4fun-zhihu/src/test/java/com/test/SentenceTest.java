@@ -2,7 +2,6 @@ package com.test;
 
 import com.pkgs.entity.zhihu.SentenceEntity;
 import com.pkgs.mapper.SentenceMapper;
-import com.pkgs.util.ProxyMapperUtil;
 import org.junit.Test;
 
 /**

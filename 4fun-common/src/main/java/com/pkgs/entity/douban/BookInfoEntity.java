@@ -27,6 +27,8 @@ public class BookInfoEntity {
     private String paperNum;
     private String translator;
 
+    private String link;
+
 
     @Override
     public String toString() {

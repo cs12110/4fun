@@ -30,10 +30,10 @@ public class BookInfoHandler extends AbstractHandler<Object, BookInfoEntity> {
 
         // 转换成实体类
         BookInfoEntity info = toEntity(document);
-        // 获取评分人数
         info.setRatingSum(getRatingSum(document));
         info.setRating(getRating(document));
         info.setSummary(getSummary(document));
+        info.setLink(reqUrl);
 
         return info;
     }

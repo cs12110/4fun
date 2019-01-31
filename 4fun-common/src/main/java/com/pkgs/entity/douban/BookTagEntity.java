@@ -12,7 +12,7 @@ import lombok.Data;
  * since: 1.0.0
  */
 @Data
-public class BookTypeEntity {
+public class BookTagEntity {
 
     /**
      * id
@@ -28,6 +28,17 @@ public class BookTypeEntity {
      * 书籍数量
      */
     private Integer books;
+
+
+    /**
+     * 爬取状态位
+     */
+    private Integer status;
+
+    /**
+     * link
+     */
+    private String link;
 
     @Override
     public String toString() {

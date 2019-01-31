@@ -1,5 +1,14 @@
 package com.pkgs.handler;
 
+import com.pkgs.entity.douban.BookTagEntity;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * <p/>
  *
@@ -7,10 +16,37 @@ package com.pkgs.handler;
  * <p>
  * since: 1.0.0
  */
-public class BookTagHandler extends AbstractHandler<Object, Object> {
+public class BookTagHandler extends AbstractHandler<Object, List<BookTagEntity>> {
+
+    private String doubanUrlPrefix = "https://book.douban.com";
 
     @Override
-    public Object parse(String html, String reqUrl) {
-        return null;
+    public List<BookTagEntity> parse(String html, String reqUrl) {
+        Document document = Jsoup.parse(html);
+        return parseToList(document);
+    }
+
+    private List<BookTagEntity> parseToList(Document document) {
+        List<BookTagEntity> list = new ArrayList<>();
+
+        Elements tdElements = document.select("td");
+
+
+        tdElements.forEach(e -> {
+            Element aElement = e.select("a").first();
+            Element bElement = e.select("b").first();
+            if (null != bElement) {
+                BookTagEntity entity = new BookTagEntity();
+                entity.setLink(doubanUrlPrefix + aElement.attr("href"));
+                entity.setName(aElement.text());
+                // 获取该标签书籍数量
+                String bookNumStr = bElement.text();
+                String num = bookNumStr.substring(1, bookNumStr.length() - 1);
+                entity.setBooks(Integer.parseInt(num));
+
+                list.add(entity);
+            }
+        });
+        return list;
     }
 }

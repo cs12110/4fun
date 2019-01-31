@@ -1,6 +1,6 @@
 package com.test;
 
-import com.pkgs.entity.zhihu.SentenceEntity;
+import com.pkgs.entity.douban.BookTagEntity;
 import com.pkgs.util.AutoGenUtil;
 import org.junit.Test;
 
@@ -16,21 +16,21 @@ public class AutoGenTest {
 
     @Test
     public void testMapperXml() {
-        String mapperXml = AutoGenUtil.genMapperXml(SentenceEntity.class);
+        String mapperXml = AutoGenUtil.genMapperXml(BookTagEntity.class);
         System.out.println(mapperXml);
     }
 
 
     @Test
     public void testMapper() {
-        String mapper = AutoGenUtil.genMapperInterface(SentenceEntity.class);
+        String mapper = AutoGenUtil.genMapperInterface(BookTagEntity.class);
         System.out.println(mapper);
     }
 
 
     @Test
     public void testSql() {
-        String sql = AutoGenUtil.genSql(SentenceEntity.class);
+        String sql = AutoGenUtil.genSql(BookTagEntity.class);
         System.out.println(sql);
     }
 }
