@@ -61,7 +61,7 @@ public class BookInfoTask {
             processList(entity.getId(), bookList);
             tagService.updatePageNum(entity.getId(), index);
 
-            sleep(10);
+            sleep(60);
         }
     }
 
@@ -91,7 +91,7 @@ public class BookInfoTask {
             } catch (Exception e) {
                 logger.error("{}", e);
             }
-            sleep(15);
+            sleep(5);
         }
     }
 
