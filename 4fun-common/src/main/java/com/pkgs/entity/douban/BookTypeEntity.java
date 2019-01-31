@@ -24,6 +24,11 @@ public class BookTypeEntity {
      */
     private String name;
 
+    /**
+     * 书籍数量
+     */
+    private Integer books;
+
     @Override
     public String toString() {
         return JSON.toJSONString(this);

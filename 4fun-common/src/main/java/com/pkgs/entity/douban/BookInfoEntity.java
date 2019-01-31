@@ -14,14 +14,22 @@ import lombok.Data;
 public class BookInfoEntity {
 
     private Integer id;
+
+    private Float rating;
+    private Integer ratingSum;
+    private Float price;
+
+    private String isbn;
     private String name;
     private String author;
-    private float score;
     private String summary;
+    private String publish;
+    private String paperNum;
+    private String translator;
 
 
     @Override
     public String toString() {
-        return JSON.toJSONString(this);
+        return JSON.toJSONString(this, true);
     }
 }
