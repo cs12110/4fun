@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 书籍标签爬虫
  * <p/>
  *
  * @author cs12110 created at: 2019/1/30 15:55
@@ -43,6 +44,8 @@ public class BookTagHandler extends AbstractHandler<Object, List<BookTagEntity>>
                 String bookNumStr = bElement.text();
                 String num = bookNumStr.substring(1, bookNumStr.length() - 1);
                 entity.setBooks(Integer.parseInt(num));
+                entity.setPage(0);
+                entity.setStatus(0);
 
                 list.add(entity);
             }

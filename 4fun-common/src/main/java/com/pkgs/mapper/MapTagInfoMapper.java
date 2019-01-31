@@ -1,24 +1,24 @@
 package com.pkgs.mapper;
 
-
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.pkgs.entity.douban.BookTagEntity;
+import com.pkgs.entity.douban.MapTagInfoEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
 
+
 /**
- * TODO: Mapper for BookTagEntity
+ * TODO: Mapper for MapTagInfoEntity
  * <p>
  *
- * @author cs12110 create at: 2019-01-31 11:50:22
+ * @author cs12110 create at: 2019-01-31 13:40:33
  * Since: 1.0.0
  */
 @Mapper
-public interface BookTagMapper extends BaseMapper<BookTagEntity> {
+public interface MapTagInfoMapper extends BaseMapper<MapTagInfoEntity> {
 
     /**
      * 新增
@@ -26,16 +26,7 @@ public interface BookTagMapper extends BaseMapper<BookTagEntity> {
      * @param entity entity
      * @return int
      */
-    int save(BookTagEntity entity);
-
-    /**
-     * 更新爬取页码
-     *
-     * @param id   id
-     * @param page 页码
-     * @return int
-     */
-    int updatePageNum(@Param("tagId") Integer id, @Param("page") Integer page);
+    int save(MapTagInfoEntity entity);
 
     /**
      * 统计符合条件的数据
@@ -43,7 +34,7 @@ public interface BookTagMapper extends BaseMapper<BookTagEntity> {
      * @param search 查询条件
      * @return int
      */
-    int selectCount(@Param("cm") BookTagEntity search);
+    int selectCount(@Param("cm") MapTagInfoEntity search);
 
 
     /**
@@ -53,5 +44,5 @@ public interface BookTagMapper extends BaseMapper<BookTagEntity> {
      * @param columnMap 查询条件
      * @return List
      */
-    List<BookTagEntity> selectByMap(Page<BookTagEntity> page, @Param("cm") Map<String, Object> columnMap);
+    List<MapTagInfoEntity> selectByMap(Page<MapTagInfoEntity> page, @Param("cm") Map<String, Object> columnMap);
 }

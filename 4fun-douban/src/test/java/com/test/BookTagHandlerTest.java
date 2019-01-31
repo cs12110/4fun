@@ -1,11 +1,14 @@
 package com.test;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.douban.BookTagEntity;
 import com.pkgs.handler.BookTagHandler;
 import com.pkgs.service.BookTagService;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p/>
@@ -32,6 +35,15 @@ public class BookTagHandlerTest {
         for (BookTagEntity e : list) {
             //mapper.save(e);
             service.saveIfNotExist(e);
+        }
+
+        Page<BookTagEntity> page = new Page<>();
+        Map<String, Object> search = new HashMap<>();
+        search.put("status", 0);
+        List<BookTagEntity> list1 = service.selectByMap(page, search);
+
+        for (BookTagEntity t : list1) {
+            System.out.println(t);
         }
 
     }

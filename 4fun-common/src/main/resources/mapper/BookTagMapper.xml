@@ -7,6 +7,7 @@
         <result column="id" property="id"/>
         <result column="name" property="name"/>
         <result column="books" property="books"/>
+        <result column="page" property="page"/>
         <result column="status" property="status"/>
         <result column="link" property="link"/>
     </resultMap>
@@ -16,6 +17,7 @@
         `name` ,
         `books` ,
         `status` ,
+        `page` ,
         `link`
     </sql>
 
@@ -33,6 +35,9 @@
             <if test="cm.status != null and cm.status != ''">
                 AND `status` LIKE concat('%',#{cm.status},'%')
             </if>
+            <if test="cm.page != null and cm.page != ''">
+                AND `page` LIKE concat('%',#{cm.page},'%')
+            </if>
             <if test="cm.link != null and cm.link != ''">
                 AND `link` LIKE concat('%',#{cm.link},'%')
             </if>
@@ -45,15 +50,26 @@
         `name` ,
         `books` ,
         `status` ,
+        `page` ,
         `link`
         ) VALUES(
         #{id},
         #{name},
         #{books},
         #{status},
+        #{page},
         #{link}
         )
     </insert>
+
+    <update id="updatePageNum">
+        UPDATE
+        book_tag_t
+        SET
+        page = #{page}
+        WHERE
+        id = #{tagId}
+    </update>
 
     <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
         SELECT

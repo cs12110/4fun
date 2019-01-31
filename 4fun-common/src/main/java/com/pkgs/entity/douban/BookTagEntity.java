@@ -31,7 +31,12 @@ public class BookTagEntity {
 
 
     /**
-     * 爬取状态位
+     * 爬取页数
+     */
+    private Integer page;
+
+    /**
+     * 状态位
      */
     private Integer status;
 

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.mapper.MapTagInfoMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.entity.douban.MapTagInfoEntity">
+        <result column="tag_id" property="tagId"/>
+        <result column="book_id" property="bookId"/>
+    </resultMap>
+
+    <sql id="fields">
+        `tag_id` ,
+        `book_id`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.tagId != null and cm.tagId != ''">
+                AND `tag_id` LIKE concat('%',#{cm.tagId},'%')
+            </if>
+            <if test="cm.bookId != null and cm.bookId != ''">
+                AND `book_id` LIKE concat('%',#{cm.bookId},'%')
+            </if>
+        </where>
+    </sql>
+
+    <insert id="save" parameterType="com.pkgs.entity.douban.MapTagInfoEntity">
+        INSERT INTO map_tag_info_t(
+        `tag_id` ,
+        `book_id`
+        ) VALUES(
+        #{tagId},
+        #{bookId}
+        )
+    </insert>
+
+    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        map_tag_info_t
+        <include refid="search"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.douban.MapTagInfoEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        map_tag_info_t
+        <include refid="search"/>
+    </select>
+</mapper>

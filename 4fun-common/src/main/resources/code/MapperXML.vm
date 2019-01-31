@@ -26,7 +26,7 @@
          </where>
     </sql>
 
-    <insert id="save" parameterType="${entityName}">
+    <insert id="save" parameterType="${entityName}" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO ${tableName}(
             #foreach ($f in $fields)
             `${f.columnName}` #if($foreach.hasNext),#end

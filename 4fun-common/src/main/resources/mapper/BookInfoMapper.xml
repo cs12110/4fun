@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pkgs.mapper.BookInfoMapper">
+
+    <!-- resultMap -->
+    <resultMap id="resultMap" type="com.pkgs.entity.douban.BookInfoEntity">
+        <result column="id" property="id"/>
+        <result column="rating" property="rating"/>
+        <result column="rating_sum" property="ratingSum"/>
+        <result column="price" property="price"/>
+        <result column="isbn" property="isbn"/>
+        <result column="name" property="name"/>
+        <result column="author" property="author"/>
+        <result column="summary" property="summary"/>
+        <result column="publish" property="publish"/>
+        <result column="paper_num" property="paperNum"/>
+        <result column="translator" property="translator"/>
+        <result column="link" property="link"/>
+    </resultMap>
+
+    <sql id="fields">
+        `id` ,
+        `rating` ,
+        `rating_sum` ,
+        `price` ,
+        `isbn` ,
+        `name` ,
+        `author` ,
+        `summary` ,
+        `publish` ,
+        `paper_num` ,
+        `translator` ,
+        `link`
+    </sql>
+
+    <sql id="search">
+        <where>
+            <if test="cm.id != null and cm.id != ''">
+                AND `id` LIKE concat('%',#{cm.id},'%')
+            </if>
+            <if test="cm.rating != null and cm.rating != ''">
+                AND `rating` LIKE concat('%',#{cm.rating},'%')
+            </if>
+            <if test="cm.ratingSum != null and cm.ratingSum != ''">
+                AND `rating_sum` LIKE concat('%',#{cm.ratingSum},'%')
+            </if>
+            <if test="cm.price != null and cm.price != ''">
+                AND `price` LIKE concat('%',#{cm.price},'%')
+            </if>
+            <if test="cm.isbn != null and cm.isbn != ''">
+                AND `isbn` LIKE concat('%',#{cm.isbn},'%')
+            </if>
+            <if test="cm.name != null and cm.name != ''">
+                AND `name` LIKE concat('%',#{cm.name},'%')
+            </if>
+            <if test="cm.author != null and cm.author != ''">
+                AND `author` LIKE concat('%',#{cm.author},'%')
+            </if>
+            <if test="cm.summary != null and cm.summary != ''">
+                AND `summary` LIKE concat('%',#{cm.summary},'%')
+            </if>
+            <if test="cm.publish != null and cm.publish != ''">
+                AND `publish` LIKE concat('%',#{cm.publish},'%')
+            </if>
+            <if test="cm.paperNum != null and cm.paperNum != ''">
+                AND `paper_num` LIKE concat('%',#{cm.paperNum},'%')
+            </if>
+            <if test="cm.translator != null and cm.translator != ''">
+                AND `translator` LIKE concat('%',#{cm.translator},'%')
+            </if>
+            <if test="cm.link != null and cm.link != ''">
+                AND `link` LIKE concat('%',#{cm.link},'%')
+            </if>
+        </where>
+    </sql>
+
+    <insert id="save" parameterType="com.pkgs.entity.douban.BookInfoEntity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO book_info_t(
+        `id` ,
+        `rating` ,
+        `rating_sum` ,
+        `price` ,
+        `isbn` ,
+        `name` ,
+        `author` ,
+        `summary` ,
+        `publish` ,
+        `paper_num` ,
+        `translator` ,
+        `link`
+        ) VALUES(
+        #{id},
+        #{rating},
+        #{ratingSum},
+        #{price},
+        #{isbn},
+        #{name},
+        #{author},
+        #{summary},
+        #{publish},
+        #{paperNum},
+        #{translator},
+        #{link}
+        )
+    </insert>
+
+    <select id="selectIdByLink" resultType="java.lang.Integer">
+        SELECT
+        id
+        FROM book_info_t
+        WHERE
+        link = #{link}
+    </select>
+
+    <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        book_info_t
+        <include refid="search"/>
+    </select>
+
+    <select id="selectCount" resultType="java.lang.Integer" parameterType="com.pkgs.entity.douban.BookInfoEntity">
+        SELECT
+        COUNT(*)
+        FROM
+        book_info_t
+        <include refid="search"/>
+    </select>
+</mapper>

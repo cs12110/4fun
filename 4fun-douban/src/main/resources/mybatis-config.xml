@@ -18,6 +18,8 @@
 
     <mappers>
         <mapper resource="mapper/BookTagMapper.xml"/>
+        <mapper resource="mapper/BookInfoMapper.xml"/>
+        <mapper resource="mapper/MapTagInfoMapper.xml"/>
     </mappers>
 
 </configuration>
