@@ -46,4 +46,8 @@ public class BookTagService {
     public List<BookTagEntity> selectByMap(Page<BookTagEntity> page, Map<String, Object> search) {
         return mapper.selectByMap(page, search);
     }
+
+    public void updateStatus(Integer id, int status) {
+        mapper.updateStatus(id, status);
+    }
 }

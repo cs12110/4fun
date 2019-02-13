@@ -71,6 +71,15 @@
         id = #{tagId}
     </update>
 
+    <update id="updateStatus">
+        UPDATE
+        book_tag_t
+        SET
+        status = #{status}
+        WHERE
+        id = #{id}
+    </update>
+
     <select id="selectByMap" resultMap="resultMap" parameterType="java.util.Map">
         SELECT
         <include refid="fields"/>
