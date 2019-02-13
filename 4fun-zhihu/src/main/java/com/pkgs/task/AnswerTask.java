@@ -212,7 +212,7 @@ public class AnswerTask implements Runnable {
          * @return Map
          */
         private Map<String, Object> buildLogMap(AnswerEntity answer, ExecResult result) {
-            Map<String, Object> map = new HashMap<>(5);
+            Map<String, Object> map = new HashMap<>(6);
             map.put("topicId", entity.getId());
             map.put("topicName", entity.getName());
             map.put("author", answer.getAuthor());

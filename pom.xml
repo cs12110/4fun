@@ -12,6 +12,7 @@
         <module>4fun-common</module>
         <module>4fun-web</module>
         <module>4fun-douban</module>
+        <module>4fun-madmax</module>
     </modules>
 
 
