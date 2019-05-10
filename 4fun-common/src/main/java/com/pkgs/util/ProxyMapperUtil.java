@@ -43,14 +43,13 @@ public class ProxyMapperUtil implements InvocationHandler {
         SqlSession session = SqlSessionUtil.openSession();
         Object sessionMapper = session.getMapper(this.mapper);
         Object result = null;
-
         try {
             result = method.invoke(sessionMapper, args);
             session.commit();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            session.close();
+            SqlSessionUtil.closeSession(session);
         }
         return result;
     }

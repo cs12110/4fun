@@ -29,5 +29,10 @@ public enum OperationEnum {
     /**
      * 删除
      */
-    DELETE
+    DELETE,
+
+    /**
+     * 操作异常
+     */
+    ERROR
 }

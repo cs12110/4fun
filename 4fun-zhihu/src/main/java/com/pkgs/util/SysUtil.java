@@ -94,6 +94,16 @@ public class SysUtil {
         return null == str || "".equals(str.trim());
     }
 
+    /**
+     * 判断字符串是否不为空
+     *
+     * @param str 字符串
+     * @return boolean
+     */
+    public static boolean isNotEmpy(String str) {
+        return null != str && !"".equals(str.trim());
+    }
+
 
     private static final String DEF_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

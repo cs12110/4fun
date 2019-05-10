@@ -1,6 +1,5 @@
 package com.pkgs.service;
 
-import com.pkgs.entity.operation.ExecResult;
 import com.pkgs.entity.zhihu.AnswerEntity;
 import com.pkgs.entity.zhihu.MapTopicAnswerEntity;
 import com.pkgs.enums.OperationEnum;
@@ -36,10 +35,11 @@ public class AnswerService {
      * @param entity entity
      * @return boolean
      */
-    public ExecResult saveIfNotExists(AnswerEntity entity) {
+    public OperationEnum saveOrUpdate(AnswerEntity entity) {
+
         lock.lock();
-        ExecResult result = new ExecResult();
-        result.setSuccess(false);
+
+        OperationEnum operation = OperationEnum.ERROR;
         try {
             AnswerMapper mapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
             Integer answerId = mapper.selectIdByLink(entity.getLink());
@@ -47,29 +47,24 @@ public class AnswerService {
             if (answerId == null) {
                 mapper.save(entity);
                 answerId = entity.getId();
-                result.setSuccess(true);
-                result.setOp(OperationEnum.INSERT);
+                operation = OperationEnum.INSERT;
             } else {
                 // 更新点赞数
-                int status = mapper.updateVoteNum(answerId, entity.getUpvoteNum());
-                if (status == 0) {
-                    //如果已经存在,则更新点赞数
-                    result.setMsg("nothing to update");
-                } else {
-                    result.setMsg("update vote num");
-                    result.setSuccess(true);
-                    result.setOp(OperationEnum.UPDATE);
+                int updateRecordNum = mapper.updateVoteNum(answerId, entity.getUpvoteNum());
+                if (updateRecordNum > 0) {
+                    operation = OperationEnum.UPDATE;
                 }
             }
             //处理关系
-            mappingTopicAnswer(entity.getTopicId(), answerId);
+            insertTopicAnswerMapping(entity.getTopicId(), answerId);
         } catch (Exception e) {
             logger.error("{}", e);
-            result.setMsg("have an error");
+            operation = OperationEnum.ERROR;
         } finally {
             lock.unlock();
         }
-        return result;
+
+        return operation;
     }
 
 
@@ -79,7 +74,7 @@ public class AnswerService {
      * @param topicId  话题
      * @param answerId 答案
      */
-    private void mappingTopicAnswer(Integer topicId, Integer answerId) {
+    private void insertTopicAnswerMapping(Integer topicId, Integer answerId) {
         try {
             MapTopicAnswerMapper mapper = ProxyMapperUtil.wrapper(MapTopicAnswerMapper.class);
 

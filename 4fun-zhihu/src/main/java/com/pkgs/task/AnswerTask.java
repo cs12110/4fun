@@ -1,9 +1,9 @@
 package com.pkgs.task;
 
 import com.alibaba.fastjson.JSON;
-import com.pkgs.entity.operation.ExecResult;
 import com.pkgs.entity.zhihu.AnswerEntity;
 import com.pkgs.entity.zhihu.TopicEntity;
+import com.pkgs.enums.CrawlStatusEnum;
 import com.pkgs.enums.OperationEnum;
 import com.pkgs.handler.AbstractHandler;
 import com.pkgs.handler.TopAnswerHandler;
@@ -54,13 +54,13 @@ public class AnswerTask implements Runnable {
 
     @Override
     public void run() {
-        logger.info("start working at get top answer");
+        logger.info("Start working at get top answer");
         long start = System.currentTimeMillis();
 
         execute();
 
         long end = System.currentTimeMillis();
-        logger.info("get top answer is done,spend:{}", (end - start));
+        logger.info("Get top answer is done,spend:{}", (end - start));
     }
 
     private void execute() {
@@ -109,11 +109,11 @@ public class AnswerTask implements Runnable {
 
         return list
                 .stream()
-                .filter(e -> null != e.getLink() && !"".equals(e.getLink().trim()))
+                .filter(e -> SysUtil.isNotEmpy(e.getLink()))
                 .collect(Collectors.toList());
     }
 
-    static class ShowOff {
+    static class OpCounter {
         /**
          * 插入条数
          */
@@ -127,102 +127,98 @@ public class AnswerTask implements Runnable {
          */
         int failureCounter = 0;
 
-        void count(ExecResult result) {
-            if (result.isSuccess()) {
-                if (OperationEnum.INSERT == result.getOp()) {
+        void count(OperationEnum operationEnum) {
+            switch (operationEnum) {
+                case INSERT:
                     insertCounter++;
-                } else if (OperationEnum.UPDATE == result.getOp()) {
+                    break;
+                case UPDATE:
                     updateCounter++;
-                } else {
+                    break;
+                default:
                     failureCounter++;
-                }
-            } else {
-                failureCounter++;
             }
+        }
+
+        @Override
+        public String toString() {
+            return "add:" + insertCounter + ", update:" + updateCounter + ", failure:" + failureCounter;
         }
     }
 
+    /**
+     * 爬虫爬取线程
+     */
     static class MySpider implements Runnable {
-        private TopicEntity entity;
+        private TopicEntity topic;
         private CountDownLatch latch;
 
-        MySpider(TopicEntity entity, CountDownLatch latch) {
-            this.entity = entity;
+        MySpider(TopicEntity topic, CountDownLatch latch) {
+            this.topic = topic;
             this.latch = latch;
         }
 
         @Override
         public void run() {
-            logger.info("Start: [{}-`{}`]", entity.getId(), entity.getName());
             long start = System.currentTimeMillis();
 
-            ShowOff showOff = new ShowOff();
+            OpCounter counter = new OpCounter();
             AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
 
             outside:
             for (int index = 0; index < pageNum; index++) {
-                handler.setValue(entity.getId());
-                String topicId = getIdFromUrl(entity.getLink());
+                handler.setValue(topic.getId());
+                String topicId = getIdFromUrl(topic.getLink());
                 String url = SysUtil.getAnswersUrlOfTopic(topicId, index * 10, 10);
 
-                for (AnswerEntity a : handler.get(url)) {
+                for (AnswerEntity answer : handler.get(url)) {
                     // 点赞数小于10k
-                    if (a.getUpvoteNum() < miniVoteNum) {
-                        logger.debug("Break up {} on page:{}", entity.getName(), index);
+                    if (answer.getUpvoteNum() < miniVoteNum) {
+                        logger.debug("Break up {} on page:{}", topic.getName(), index);
                         break outside;
                     }
 
                     // 执行存储操作
-                    ExecResult result = answerService.saveIfNotExists(a);
-                    showOff.count(result);
-                    if (result.getOp() == OperationEnum.INSERT) {
-                        Map<String, Object> map = buildLogMap(a, result);
+                    OperationEnum result = answerService.saveOrUpdate(answer);
+                    counter.count(result);
+
+                    if (result == OperationEnum.INSERT) {
+                        Map<String, Object> map = buildLogMap(answer, result);
                         logger.info(JSON.toJSONString(map, true));
+                    } else if (logger.isDebugEnabled()) {
+                        Map<String, Object> map = buildLogMap(answer, result);
+                        logger.debug(JSON.toJSONString(map, true));
                     }
                 }
             }
-            topicService.updateDoneStatus(entity.getId(), 1);
+
+            topicService.updateDoneStatus(topic.getId(), CrawlStatusEnum.ALREADY.getValue());
             latch.countDown();
 
-            // 报告日志
-            makeAReport(showOff, System.currentTimeMillis() - start);
+            // 总体操作日志
+            long spend = System.currentTimeMillis() - start;
+            logger.info("[{}#{}] {}, spend:{} ms", topic.getId(), topic.getName(), counter, spend);
         }
 
-        /**
-         * makeAReport log
-         *
-         * @param showOff    show off
-         * @param spendMills spend times
-         */
-        private void makeAReport(ShowOff showOff, long spendMills) {
-            logger.info("[{}-`{}`] add: {}, update: {}, failure: {}, spend: {}(mills)",
-                    entity.getId(),
-                    entity.getName(),
-                    showOff.insertCounter,
-                    showOff.updateCounter,
-                    showOff.failureCounter,
-                    spendMills);
-        }
 
         /**
          * 构建显示新增数据
          *
-         * @param answer answer对象
-         * @param result 执行结果
+         * @param answer        answer对象
+         * @param operationEnum 执行类型
          * @return Map
          */
-        private Map<String, Object> buildLogMap(AnswerEntity answer, ExecResult result) {
+        private Map<String, Object> buildLogMap(AnswerEntity answer, OperationEnum operationEnum) {
             Map<String, Object> map = new HashMap<>(6);
-            map.put("topicId", entity.getId());
-            map.put("topicName", entity.getName());
+            map.put("topicId", topic.getId());
+            map.put("topicName", topic.getName());
+            map.put("answerId", answer.getAnswerId());
             map.put("author", answer.getAuthor());
             map.put("question", answer.getQuestion());
-            map.put("status", result.isSuccess());
-            map.put("operation", result.getOp());
+            map.put("operation", operationEnum);
 
             return map;
         }
-
     }
 
     /**
@@ -238,6 +234,4 @@ public class AnswerTask implements Runnable {
         int last = url.lastIndexOf("/");
         return url.substring(last + 1);
     }
-
-
 }

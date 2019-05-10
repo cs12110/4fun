@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.pkgs.entity.zhihu.TopicEntity;
+import com.pkgs.enums.CrawlStatusEnum;
 import com.pkgs.util.SysUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,7 +45,7 @@ public class SubTopicHandler extends AbstractHandler<Integer, List<TopicEntity>>
                         // 过滤为null的对象
                         .filter(Objects::nonNull)
                         // 设置状态位
-                        .peek(e -> e.setDone(0))
+                        .peek(e -> e.setDone(CrawlStatusEnum.NOT_YET.getValue()))
                         // collect
                         .collect(Collectors.toList());
 

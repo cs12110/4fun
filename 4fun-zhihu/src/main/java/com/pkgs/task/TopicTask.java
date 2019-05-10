@@ -26,12 +26,11 @@ public class TopicTask implements Runnable {
 
     @Override
     public void run() {
-        logger.info("start working at get topic from zhihu");
+        logger.info("Start working at get topic from zhihu");
         long start = System.currentTimeMillis();
         execute();
         long end = System.currentTimeMillis();
-        logger.info("get topic is done,spend:{}", (end - start));
-
+        logger.info("Get topic is done,spend:{}", (end - start));
     }
 
     private void execute() {
@@ -49,7 +48,9 @@ public class TopicTask implements Runnable {
     private void getAllTopTopic() {
         // 1. 首先查询出来所有的父级话题
         AbstractHandler<Object, List<TopicEntity>> topHandler = new TopTopicHandler();
-        topHandler.get(SysUtil.TOPIC_URL).forEach(topicService::saveIfNotExists);
+        topHandler
+                .get(SysUtil.TOPIC_URL)
+                .forEach(topicService::saveIfNotExists);
     }
 
     /**

@@ -2,6 +2,7 @@ package com.pkgs.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.pkgs.entity.zhihu.TopicEntity;
+import com.pkgs.enums.CrawlStatusEnum;
 import com.pkgs.mapper.TopicMapper;
 import com.pkgs.util.ProxyMapperUtil;
 import com.pkgs.util.SysUtil;
@@ -76,10 +77,21 @@ public class TopicService {
      */
     public List<TopicEntity> queryRemainTopic() {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("done", 0);
+        map.put("done", CrawlStatusEnum.NOT_YET.getValue());
         Page<TopicEntity> page = new Page<>();
         TopicMapper mapper = ProxyMapperUtil.wrapper(TopicMapper.class);
         return mapper.selectByMap(page, map);
+    }
+
+
+    /**
+     * 统计尚未爬取的话题数量
+     *
+     * @return int
+     */
+    public int countRemainTopic() {
+        TopicMapper mapper = ProxyMapperUtil.wrapper(TopicMapper.class);
+        return mapper.countRemainTopic(CrawlStatusEnum.NOT_YET.getValue());
     }
 
 

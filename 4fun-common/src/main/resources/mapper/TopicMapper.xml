@@ -60,7 +60,8 @@
         topic_t
         SET
         done = #{status},
-        update_time = #{updateTime}
+        update_time = #{updateTime},
+        times = times+1
         WHERE
         <choose>
             <when test="topicId != null">
@@ -112,15 +113,6 @@
     </select>
 
     <select id="queryTopics" resultMap="resultMap">
-        <!--SELECT DISTINCT-->
-        <!--topic_t.*-->
-        <!--FROM-->
-        <!--topic_t-->
-        <!--LEFT JOIN top_answer_t ON top_answer_t.topic_id = topic_t.id-->
-        <!--WHERE-->
-        <!--topic_t.parent_id = #{parent_id}-->
-        <!--AND topic_id IS NOT NULL-->
-
         SELECT
         DISTINCT topic_t.*
         FROM
@@ -141,14 +133,22 @@
 
     <select id="selectChildId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
         SELECT
-            id
+        id
         FROM
-            topic_t
+        topic_t
         WHERE
-            1=1
+        1=1
         <if test="id!=null">
             AND parent_id = #{id}
         </if>
+    </select>
 
+    <select id="countRemainTopic" resultType="java.lang.Integer">
+        SELECT
+        COUNT(*)
+        FROM
+        topic_t
+        WHERE
+        done = #{status}
     </select>
 </mapper>

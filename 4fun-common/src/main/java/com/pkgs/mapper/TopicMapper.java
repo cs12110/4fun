@@ -48,6 +48,14 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
     int selectCount(@Param("cm") TopicEntity topic);
 
     /**
+     * 统计尚未爬取的话题数量
+     *
+     * @param status 爬取状态
+     * @return int
+     */
+    int countRemainTopic(@Param("status") Integer status);
+
+    /**
      * 分页查询
      *
      * @param page      分页参数

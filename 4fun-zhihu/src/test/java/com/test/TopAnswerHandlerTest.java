@@ -14,7 +14,7 @@ public class TopAnswerHandlerTest {
     private AnswerService topAnswerService = new AnswerService();
 
     @Test
-    public void test() throws Exception {
+    public void test() {
 
         String url = SysUtil.getAnswersUrlOfTopic("19555513", 0, 10);
 
@@ -23,7 +23,7 @@ public class TopAnswerHandlerTest {
         List<AnswerEntity> list = h.get(url);
 
         for (AnswerEntity t : list) {
-            topAnswerService.saveIfNotExists(t);
+            topAnswerService.saveOrUpdate(t);
         }
 
     }

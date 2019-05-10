@@ -59,8 +59,10 @@ CREATE TABLE `topic_t` (
   `link` varchar(256) DEFAULT NULL COMMENT '连接',
   `desc` varchar(256) DEFAULT NULL COMMENT '描述',
   `update_time` varchar(32) DEFAULT NULL COMMENT '更新时间',
-  `done` int(1) DEFAULT '0',
+  `done` tinyint(2) DEFAULT '0' COMMENT '0:尚未爬取,1:已爬取',
+  `times` int(6) DEFAULT '0' COMMENT '爬取次数',
   PRIMARY KEY (`id`),
   KEY `data_id` (`data_id`) COMMENT 'dataIdIndex',
   KEY `name` (`name`(255)) COMMENT 'nameIndex'
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='话题表';
+

@@ -1,6 +1,7 @@
 package com.pkgs.handler;
 
 import com.pkgs.entity.zhihu.TopicEntity;
+import com.pkgs.enums.CrawlStatusEnum;
 import com.pkgs.util.SysUtil;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -35,7 +36,7 @@ public class TopTopicHandler extends AbstractHandler<Object, List<TopicEntity>> 
                 topic.setName(name);
                 topic.setUpdateTime(SysUtil.getTime());
                 //设置为已经爬取
-                topic.setDone(1);
+                topic.setDone(CrawlStatusEnum.ALREADY.getValue());
                 list.add(topic);
             }
         } catch (Exception e) {

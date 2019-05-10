@@ -24,9 +24,8 @@ public class SqlSessionUtil {
     /**
      * 初始化SQLSessionFactory
      */
-    private static void init() {
-        try {
-            InputStream stream = SqlSessionUtil.class.getResourceAsStream("/mybatis-config.xml");
+    private static void initMybatisEnv() {
+        try (InputStream stream = SqlSessionUtil.class.getResourceAsStream("/mybatis-config.xml")) {
             SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
             sessionFactory = sqlSessionFactoryBuilder.build(stream);
             stream.close();
@@ -45,7 +44,7 @@ public class SqlSessionUtil {
         if (!isInit) {
             synchronized (SqlSessionUtil.class) {
                 if (!isInit) {
-                    init();
+                    initMybatisEnv();
                 }
             }
         }
