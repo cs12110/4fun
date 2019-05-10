@@ -100,7 +100,7 @@ public class SysUtil {
      * @param str 字符串
      * @return boolean
      */
-    public static boolean isNotEmpy(String str) {
+    public static boolean isNotEmpty(String str) {
         return null != str && !"".equals(str.trim());
     }
 

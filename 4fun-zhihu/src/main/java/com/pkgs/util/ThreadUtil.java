@@ -28,7 +28,7 @@ public class ThreadUtil {
                 coreSize,
                 keepAliveTime,
                 TimeUnit.SECONDS,
-                new LinkedBlockingDeque<>(),
+                new LinkedBlockingQueue<>(),
                 ThreadUtil.buildFactory(prefixName));
     }
 

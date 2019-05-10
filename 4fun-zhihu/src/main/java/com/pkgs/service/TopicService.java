@@ -75,12 +75,9 @@ public class TopicService {
      *
      * @return List
      */
-    public List<TopicEntity> queryRemainTopic() {
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("done", CrawlStatusEnum.NOT_YET.getValue());
-        Page<TopicEntity> page = new Page<>();
+    public List<TopicEntity> queryRemainTopic(Integer limit) {
         TopicMapper mapper = ProxyMapperUtil.wrapper(TopicMapper.class);
-        return mapper.selectByMap(page, map);
+        return mapper.selectRemainTopicList(limit);
     }
 
 
@@ -101,7 +98,7 @@ public class TopicService {
      * @param topicId 话题Id
      * @param status  {0:未爬取,1:已爬取}
      */
-    public void updateDoneStatus(Integer topicId, int status) {
+    public void updateAttr(Integer topicId, int status) {
         TopicMapper mapper = ProxyMapperUtil.wrapper(TopicMapper.class);
         mapper.updateDoneStatus(topicId, status, SysUtil.getTime());
     }

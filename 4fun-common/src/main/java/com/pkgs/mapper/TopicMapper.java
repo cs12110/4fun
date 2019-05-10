@@ -65,6 +65,13 @@ public interface TopicMapper extends BaseMapper<TopicEntity> {
     List<TopicEntity> selectByMap(Page<TopicEntity> page,
                                   @Param("cm") Map<String, Object> columnMap);
 
+    /**
+     * 查询尚未爬取的数据
+     *
+     * @param limit 数量
+     * @return List
+     */
+    List<TopicEntity> selectRemainTopicList(@Param("limit") Integer limit);
 
     /**
      * 获取顶级的话题

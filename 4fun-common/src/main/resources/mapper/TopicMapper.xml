@@ -95,6 +95,17 @@
         )
     </insert>
 
+    <select id="selectRemainTopicList" resultMap="resultMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        topic_t
+        WHERE
+        done = 0
+        AND link IS NOT NULL
+        LIMIT #{limit}
+    </select>
+
     <select id="selectByMap" resultMap="resultMap">
         SELECT
         <include refid="fields"/>

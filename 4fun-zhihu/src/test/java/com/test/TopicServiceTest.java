@@ -48,16 +48,16 @@ public class TopicServiceTest {
     @Test
     public void testUpdate() {
         TopicService topicService = new TopicService();
-        topicService.updateDoneStatus(null, 0);
-        topicService.updateDoneStatus(1, 1);
+        topicService.updateAttr(null, 0);
+        topicService.updateAttr(1, 1);
     }
 
 
     @Test
     public void testProxyMapper() {
         TopicService topicService = new TopicService();
-        topicService.updateDoneStatus(null, 0);
-        topicService.updateDoneStatus(1, 1);
+        topicService.updateAttr(null, 0);
+        topicService.updateAttr(1, 1);
     }
 
 

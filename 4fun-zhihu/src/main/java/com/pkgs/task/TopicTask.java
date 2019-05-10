@@ -84,8 +84,5 @@ public class TopicTask implements Runnable {
                 logger.error("{}", ex);
             }
         }
-
     }
-
-
 }

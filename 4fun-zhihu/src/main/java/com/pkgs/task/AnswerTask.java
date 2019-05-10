@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
-import java.util.stream.Collectors;
 
 /**
  * 获取top answer
@@ -54,64 +53,24 @@ public class AnswerTask implements Runnable {
 
     @Override
     public void run() {
-        logger.info("Start working at get top answer");
-        long start = System.currentTimeMillis();
-
         execute();
-
-        long end = System.currentTimeMillis();
-        logger.info("Get top answer is done,spend:{}", (end - start));
     }
 
     private void execute() {
-        List<TopicEntity> topicList = getRemainTopics();
-        int size = topicList.size();
-        int limit = getPageNum(size, THREAD_NUM);
+        CountDownLatch countDownLatch = new CountDownLatch(THREAD_NUM);
+        List<TopicEntity> topicList = topicService.queryRemainTopic(THREAD_NUM);
 
-        for (int index = 0; index < limit; index++) {
-            int start = index * THREAD_NUM;
-            int end = start + THREAD_NUM > size ? size : start + THREAD_NUM;
-
-            List<TopicEntity> partList = topicList.subList(start, end);
-            CountDownLatch countDownLatch = new CountDownLatch(partList.size());
-
-            for (TopicEntity e : partList) {
-                pool.submit(new MySpider(e, countDownLatch));
-            }
-
-            try {
-                countDownLatch.await();
-            } catch (Exception e) {
-                //do nothing
-            }
-
-            int sleep = 5 + random.nextInt(5);
-            SysUtil.justStandingHere(sleep);
+        for (TopicEntity e : topicList) {
+            pool.submit(new MySpider(e, countDownLatch));
         }
+        try {
+            countDownLatch.await();
+        } catch (Exception e) {
+            //do nothing
+        }
+        SysUtil.justStandingHere(random.nextInt(5));
     }
 
-    /**
-     * 获取分页数量
-     *
-     * @param size     列表大小
-     * @param pageSize 分页大小
-     * @return int
-     */
-    private int getPageNum(int size, int pageSize) {
-        int tmp = size / pageSize;
-        return size % pageSize == 0 ? tmp : tmp + 1;
-    }
-
-
-    private List<TopicEntity> getRemainTopics() {
-        // 获取需要爬取的话题
-        List<TopicEntity> list = topicService.queryRemainTopic();
-
-        return list
-                .stream()
-                .filter(e -> SysUtil.isNotEmpy(e.getLink()))
-                .collect(Collectors.toList());
-    }
 
     static class OpCounter {
         /**
@@ -152,6 +111,7 @@ public class AnswerTask implements Runnable {
     static class MySpider implements Runnable {
         private TopicEntity topic;
         private CountDownLatch latch;
+        private Map<String, Object> logMap = new HashMap<>(6);
 
         MySpider(TopicEntity topic, CountDownLatch latch) {
             this.topic = topic;
@@ -164,35 +124,32 @@ public class AnswerTask implements Runnable {
 
             OpCounter counter = new OpCounter();
             AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
+            handler.setValue(topic.getId());
 
             outside:
             for (int index = 0; index < pageNum; index++) {
-                handler.setValue(topic.getId());
+
                 String topicId = getIdFromUrl(topic.getLink());
                 String url = SysUtil.getAnswersUrlOfTopic(topicId, index * 10, 10);
 
                 for (AnswerEntity answer : handler.get(url)) {
                     // 点赞数小于10k
                     if (answer.getUpvoteNum() < miniVoteNum) {
-                        logger.debug("Break up {} on page:{}", topic.getName(), index);
+                        logger.debug("Break up: {} on page:{}", topic.getName(), index);
                         break outside;
                     }
 
                     // 执行存储操作
                     OperationEnum result = answerService.saveOrUpdate(answer);
-                    counter.count(result);
+                    setLogMapValue(answer, result);
 
-                    if (result == OperationEnum.INSERT) {
-                        Map<String, Object> map = buildLogMap(answer, result);
-                        logger.info(JSON.toJSONString(map, true));
-                    } else if (logger.isDebugEnabled()) {
-                        Map<String, Object> map = buildLogMap(answer, result);
-                        logger.debug(JSON.toJSONString(map, true));
-                    }
+                    logger.info(JSON.toJSONString(logMap, true));
+
+                    counter.count(result);
                 }
             }
 
-            topicService.updateDoneStatus(topic.getId(), CrawlStatusEnum.ALREADY.getValue());
+            topicService.updateAttr(topic.getId(), CrawlStatusEnum.ALREADY.getValue());
             latch.countDown();
 
             // 总体操作日志
@@ -206,18 +163,14 @@ public class AnswerTask implements Runnable {
          *
          * @param answer        answer对象
          * @param operationEnum 执行类型
-         * @return Map
          */
-        private Map<String, Object> buildLogMap(AnswerEntity answer, OperationEnum operationEnum) {
-            Map<String, Object> map = new HashMap<>(6);
-            map.put("topicId", topic.getId());
-            map.put("topicName", topic.getName());
-            map.put("answerId", answer.getAnswerId());
-            map.put("author", answer.getAuthor());
-            map.put("question", answer.getQuestion());
-            map.put("operation", operationEnum);
-
-            return map;
+        private void setLogMapValue(AnswerEntity answer, OperationEnum operationEnum) {
+            logMap.put("topicId", topic.getId());
+            logMap.put("topicName", topic.getName());
+            logMap.put("answerId", answer.getAnswerId());
+            logMap.put("author", answer.getAuthor());
+            logMap.put("question", answer.getQuestion());
+            logMap.put("operation", operationEnum);
         }
     }
 

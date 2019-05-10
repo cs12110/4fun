@@ -45,6 +45,7 @@ public class ProxyMapperUtil implements InvocationHandler {
         Object result = null;
         try {
             result = method.invoke(sessionMapper, args);
+
             session.commit();
         } catch (Exception e) {
             e.printStackTrace();

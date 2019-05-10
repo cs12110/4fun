@@ -18,9 +18,9 @@ public class TopAnswerHandlerTest {
 
         String url = SysUtil.getAnswersUrlOfTopic("19555513", 0, 10);
 
-        AbstractHandler<Integer, List<AnswerEntity>> h = new TopAnswerHandler();
-        h.setValue(34);
-        List<AnswerEntity> list = h.get(url);
+        AbstractHandler<Integer, List<AnswerEntity>> handler = new TopAnswerHandler();
+        handler.setValue(34);
+        List<AnswerEntity> list = handler.get(url);
 
         for (AnswerEntity t : list) {
             topAnswerService.saveOrUpdate(t);

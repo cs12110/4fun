@@ -24,11 +24,11 @@ public class App {
                 3,
                 ThreadUtil.buildFactory("timer"));
 
-        // 答案爬虫定时器,定时为1分钟
+        // 答案爬虫定时器,定时为10s
         schedule.scheduleAtFixedRate(
                 new AnswerTask(),
                 10,
-                60, TimeUnit.SECONDS);
+                10, TimeUnit.SECONDS);
 
         // 重设状态爬虫定时器，定时为3分钟
         schedule.scheduleAtFixedRate(

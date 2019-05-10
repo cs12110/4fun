@@ -20,16 +20,11 @@ public class ResetStatusTask implements Runnable {
 
     @Override
     public void run() {
-        String log;
         int remain = topicService.countRemainTopic();
-
         if (0 == remain) {
-            topicService.updateDoneStatus(null, CrawlStatusEnum.NOT_YET.getValue());
-            log = "Reset all topic status to undone";
-        } else {
-            log = "Still need to steal from zhihu,remain:" + remain;
+            topicService.updateAttr(null, CrawlStatusEnum.NOT_YET.getValue());
+            logger.info("Reset all topic status to undone");
         }
 
-        logger.info(log);
     }
 }

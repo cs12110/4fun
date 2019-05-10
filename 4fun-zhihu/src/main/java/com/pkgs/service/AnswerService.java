@@ -5,6 +5,7 @@ import com.pkgs.entity.zhihu.MapTopicAnswerEntity;
 import com.pkgs.enums.OperationEnum;
 import com.pkgs.mapper.AnswerMapper;
 import com.pkgs.mapper.MapTopicAnswerMapper;
+import com.pkgs.util.CacheUtil;
 import com.pkgs.util.ProxyMapperUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,12 @@ public class AnswerService {
      */
     private static ReentrantLock lock = new ReentrantLock();
 
+    private static final String ANSWER_ID_KEY_PREFIX = "answerId#";
+    private static final String MAPPING_KEY_PREFIX = "answerTopicMapping#";
+
+    private AnswerMapper answerMapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
+    private MapTopicAnswerMapper mapTopicAnswerMapper = ProxyMapperUtil.wrapper(MapTopicAnswerMapper.class);
+
     /**
      * 保存数据
      *
@@ -39,32 +46,43 @@ public class AnswerService {
 
         lock.lock();
 
-        OperationEnum operation = OperationEnum.ERROR;
+        OperationEnum operation;
         try {
-            AnswerMapper mapper = ProxyMapperUtil.wrapper(AnswerMapper.class);
-            Integer answerId = mapper.selectIdByLink(entity.getLink());
-
+            Integer answerId = getAnswerIdByLink(entity.getLink());
             if (answerId == null) {
-                mapper.save(entity);
+                answerMapper.save(entity);
                 answerId = entity.getId();
                 operation = OperationEnum.INSERT;
             } else {
                 // 更新点赞数
-                int updateRecordNum = mapper.updateVoteNum(answerId, entity.getUpvoteNum());
-                if (updateRecordNum > 0) {
-                    operation = OperationEnum.UPDATE;
-                }
+                answerMapper.updateVoteNum(answerId, entity.getUpvoteNum());
+                operation = OperationEnum.UPDATE;
             }
             //处理关系
-            insertTopicAnswerMapping(entity.getTopicId(), answerId);
+            insertTopicAnswerMappingIfNotExists(entity.getTopicId(), answerId);
         } catch (Exception e) {
             logger.error("{}", e);
             operation = OperationEnum.ERROR;
         } finally {
             lock.unlock();
         }
-
         return operation;
+    }
+
+    /**
+     * 整合本地缓存策略,根据连接获取回答id
+     *
+     * @param link link
+     * @return Integer
+     */
+    private Integer getAnswerIdByLink(String link) {
+        String key = ANSWER_ID_KEY_PREFIX + link;
+        Object value = CacheUtil.get(key);
+        if (value == null) {
+            value = answerMapper.selectIdByLink(link);
+            CacheUtil.put(key, value);
+        }
+        return (Integer) value;
     }
 
 
@@ -74,20 +92,34 @@ public class AnswerService {
      * @param topicId  话题
      * @param answerId 答案
      */
-    private void insertTopicAnswerMapping(Integer topicId, Integer answerId) {
+    private void insertTopicAnswerMappingIfNotExists(Integer topicId, Integer answerId) {
         try {
-            MapTopicAnswerMapper mapper = ProxyMapperUtil.wrapper(MapTopicAnswerMapper.class);
+            MapTopicAnswerEntity mapping = new MapTopicAnswerEntity();
+            mapping.setTopicId(topicId);
+            mapping.setAnswerId(answerId);
 
-            MapTopicAnswerEntity search = new MapTopicAnswerEntity();
-            search.setTopicId(topicId);
-            search.setAnswerId(answerId);
-            int count = mapper.selectCount(search);
-
+            int count = countMapping(mapping);
             if (count == 0) {
-                mapper.save(search);
+                mapTopicAnswerMapper.save(mapping);
             }
         } catch (Exception e) {
             logger.error("{}", e);
         }
+    }
+
+    /**
+     * 统计关联个数
+     *
+     * @param search 查询参数
+     * @return Integer
+     */
+    private Integer countMapping(MapTopicAnswerEntity search) {
+        String key = MAPPING_KEY_PREFIX + search.getTopicId() + "-" + search.getAnswerId();
+        Object value = CacheUtil.get(key);
+        if (value == null) {
+            value = mapTopicAnswerMapper.selectCount(search);
+            CacheUtil.put(key, value);
+        }
+        return (Integer) value;
     }
 }
