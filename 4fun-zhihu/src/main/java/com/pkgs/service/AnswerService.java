@@ -80,7 +80,9 @@ public class AnswerService {
         Object value = CacheUtil.get(key);
         if (value == null) {
             value = answerMapper.selectIdByLink(link);
-            CacheUtil.put(key, value);
+            if (value != null) {
+                CacheUtil.put(key, value);
+            }
         }
         return (Integer) value;
     }

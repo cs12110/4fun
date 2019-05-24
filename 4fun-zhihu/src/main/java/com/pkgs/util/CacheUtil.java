@@ -30,5 +30,4 @@ public class CacheUtil {
     public static void remove(String key) {
         cache.remove(key);
     }
-
 }
