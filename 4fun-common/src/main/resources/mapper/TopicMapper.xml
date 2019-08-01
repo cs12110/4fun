@@ -57,7 +57,7 @@
 
     <update id="updateDoneStatus" parameterType="java.lang.Integer">
         UPDATE
-        topic_t
+        t_zhihu_topic
         SET
         done = #{status},
         update_time = #{updateTime},
@@ -76,7 +76,7 @@
 
 
     <insert id="save" parameterType="com.pkgs.entity.zhihu.TopicEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO topic_t(
+        INSERT INTO t_zhihu_topic(
         `parent_id` ,
         `data_id` ,
         `name` ,
@@ -99,7 +99,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        topic_t
+        t_zhihu_topic
         WHERE
         done = 0
         AND link IS NOT NULL
@@ -110,7 +110,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        topic_t
+        t_zhihu_topic
         <include refid="search"/>
     </select>
 
@@ -118,19 +118,19 @@
         SELECT
         <include refid="fields"/>
         FROM
-        topic_t
+        t_zhihu_topic
         WHERE
         parent_id IS NULL
     </select>
 
     <select id="queryTopics" resultMap="resultMap">
         SELECT
-        DISTINCT topic_t.*
+        DISTINCT t_zhihu_topic.*
         FROM
-        topic_t
-        LEFT JOIN map_topic_answer_t ON topic_t.id = map_topic_answer_t.topic_id
+        t_zhihu_topic
+        LEFT JOIN map_topic_answer_t ON t_zhihu_topic.id = map_topic_answer_t.topic_id
         WHERE
-        topic_t.parent_id = #{parent_id}
+        t_zhihu_topic.parent_id = #{parent_id}
         AND map_topic_answer_t.answer_id IS NOT NULL
     </select>
 
@@ -138,7 +138,7 @@
         SELECT
         COUNT(*)
         FROM
-        topic_t
+        t_zhihu_topic
         <include refid="search"/>
     </select>
 
@@ -146,7 +146,7 @@
         SELECT
         id
         FROM
-        topic_t
+        t_zhihu_topic
         WHERE
         1=1
         <if test="id!=null">
@@ -158,7 +158,7 @@
         SELECT
         COUNT(*)
         FROM
-        topic_t
+        t_zhihu_topic
         WHERE
         done = #{status}
     </select>

@@ -70,6 +70,7 @@ public class TopAnswerHandler extends AbstractHandler<Integer, List<AnswerEntity
 
             JSONObject authorInfo = (JSONObject) target.get("author");
             answer.setAuthor(authorInfo.getString("name"));
+            answer.setAuthorImg(authorInfo.getString("avatar_url"));
 
             answer.setQuestion(questionInfo.getString("title"));
             answer.setQuestionId(getIdFromUrl(questionInfo.getString("url")));

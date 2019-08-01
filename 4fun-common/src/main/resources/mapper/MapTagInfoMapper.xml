@@ -25,7 +25,7 @@
     </sql>
 
     <insert id="save" parameterType="com.pkgs.entity.douban.MapTagInfoEntity">
-        INSERT INTO map_tag_info_t(
+        INSERT INTO t_douban_book_tag_info(
         `tag_id` ,
         `book_id`
         ) VALUES(
@@ -38,7 +38,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        map_tag_info_t
+        t_douban_book_tag_info
         <include refid="search"/>
     </select>
 
@@ -46,7 +46,7 @@
         SELECT
         COUNT(*)
         FROM
-        map_tag_info_t
+        t_douban_book_tag_info
         <include refid="search"/>
     </select>
 </mapper>

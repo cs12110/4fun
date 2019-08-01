@@ -21,6 +21,7 @@ public class AnswerEntity {
     private String questionId;
     private String answerId;
     private String author;
+    private String authorImg;
     private String link;
     private Integer upvoteNum;
     private Integer commentNum;

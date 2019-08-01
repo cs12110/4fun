@@ -45,7 +45,7 @@
     </sql>
 
     <insert id="save" parameterType="com.pkgs.entity.douban.BookTagEntity">
-        INSERT INTO book_tag_t(
+        INSERT INTO t_douban_book_tag(
         `id` ,
         `name` ,
         `books` ,
@@ -64,7 +64,7 @@
 
     <update id="updatePageNum">
         UPDATE
-        book_tag_t
+        t_douban_book_tag
         SET
         page = #{page}
         WHERE
@@ -73,7 +73,7 @@
 
     <update id="updateStatus">
         UPDATE
-        book_tag_t
+        t_douban_book_tag
         SET
         status = #{status}
         WHERE
@@ -84,7 +84,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        book_tag_t
+        t_douban_book_tag
         <include refid="search"/>
     </select>
 
@@ -92,7 +92,7 @@
         SELECT
         COUNT(*)
         FROM
-        book_tag_t
+        t_douban_book_tag
         <include refid="search"/>
     </select>
 </mapper>

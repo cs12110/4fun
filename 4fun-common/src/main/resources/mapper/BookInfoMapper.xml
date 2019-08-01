@@ -75,7 +75,7 @@
     </sql>
 
     <insert id="save" parameterType="com.pkgs.entity.douban.BookInfoEntity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO book_info_t(
+        INSERT INTO t_douban_book_info(
         `id` ,
         `rating` ,
         `rating_sum` ,
@@ -107,7 +107,7 @@
     <select id="selectIdByLink" resultType="java.lang.Integer">
         SELECT
         id
-        FROM book_info_t
+        FROM t_douban_book_info
         WHERE
         link = #{link}
     </select>
@@ -116,7 +116,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        book_info_t
+        t_douban_book_info
         <include refid="search"/>
     </select>
 
@@ -124,7 +124,7 @@
         SELECT
         COUNT(*)
         FROM
-        book_info_t
+        t_douban_book_info
         <include refid="search"/>
     </select>
 </mapper>

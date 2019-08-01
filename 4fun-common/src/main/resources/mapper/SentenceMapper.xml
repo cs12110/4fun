@@ -40,7 +40,7 @@
     </sql>
 
     <insert id="save" parameterType="com.pkgs.entity.zhihu.SentenceEntity">
-        INSERT INTO sentence_t(
+        INSERT INTO t_prime_sentence(
         `id` ,
         `author` ,
         `sentence` ,
@@ -59,7 +59,7 @@
         SELECT
         <include refid="fields"/>
         FROM
-        sentence_t
+        t_prime_sentence
         <include refid="search"/>
     </select>
 
@@ -67,7 +67,7 @@
         SELECT
         COUNT(*)
         FROM
-        sentence_t
+        t_prime_sentence
         <include refid="search"/>
     </select>
 </mapper>
