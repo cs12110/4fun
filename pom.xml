@@ -26,7 +26,7 @@
     <properties>
         <slf4j.version>1.7.22</slf4j.version>
         <logback.version>1.1.9</logback.version>
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <mockito.version>1.10.19</mockito.version>
         <fastjson.version>1.2.31</fastjson.version>
         <mysql.version>5.1.40</mysql.version>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13.1</version>
         </dependency>
 
         <dependency>
